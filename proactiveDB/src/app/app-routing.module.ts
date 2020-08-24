@@ -4,6 +4,10 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { MenuToolboxComponent } from './shared/toolbox/menu-toolbox/menu-toolbox.component';
 import { DatasourceToolboxComponent } from './shared/toolbox/datasource-toolbox/datasource-toolbox.component';
 import { TabToolboxComponent } from './shared/toolbox/tab-toolbox/tab-toolbox.component';
+import { UserToolboxComponent } from './shared/toolbox/user-toolbox/user-toolbox.component';
+import { AddChartToolboxComponent } from './shared/toolbox/add-chart-toolbox/add-chart-toolbox.component';
+import { AddVisualToolboxComponent } from './shared/toolbox/add-visual-toolbox/add-visual-toolbox.component';
+import { ChartToolboxComponent } from './shared/toolbox/chart-toolbox/chart-toolbox.component';
 
 
 const routes: Routes = [
@@ -20,6 +24,26 @@ const routes: Routes = [
   { 
     path: 'tab-toolbox',
     component: TabToolboxComponent,
+    outlet: 'toolbox'
+  },
+  { 
+    path: 'user-toolbox',
+    component: UserToolboxComponent,
+    outlet: 'toolbox'
+  },
+  { 
+    path: 'add-chart-toolbox',
+    component: AddChartToolboxComponent,
+    outlet: 'toolbox'
+  },
+  { 
+    path: 'add-visual-toolbox',
+    component: AddVisualToolboxComponent,
+    outlet: 'toolbox'
+  },
+  { 
+    path: 'chart-toolbox',
+    component: ChartToolboxComponent,
     outlet: 'toolbox'
   },
   { 

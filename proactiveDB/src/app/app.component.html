@@ -7,6 +7,12 @@
   
   <!-- toolbox -->
   <mat-drawer #drawer class="app-sidenav" mode="side" position="end">
+    <!-- close -->
+    <div class="close-btn">
+      <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: null} } ]">
+        <mat-icon>close</mat-icon>
+      </a>    
+    </div>
     <router-outlet (activate)="drawer.toggle()" (deactivate)="drawer.close()" name="toolbox"></router-outlet>
   </mat-drawer>
 

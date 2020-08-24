@@ -1,7 +1,25 @@
-<div class="menu-container">
+<div class="menu-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="16px">
   
-  <a mat-icon-button [routerLink]="['dashboard/datasource-toolbox']">
+  <!-- user profile -->
+  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'user-toolbox'} } ]">
     <mat-icon>account_circle</mat-icon>
+  </a>
+
+  <div class="vertical-spacer"></div>
+
+  <!-- datasources -->
+  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'datasource-toolbox'} } ]">
+    <mat-icon>storage</mat-icon>
+  </a>
+
+  <!-- add charts -->
+  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'add-chart-toolbox'} } ]">
+    <mat-icon>addchart</mat-icon>
+  </a>
+
+  <!-- add visual -->
+  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'add-visual-toolbox'} } ]">
+    <mat-icon>extension</mat-icon>
   </a>
   
 </div>

@@ -1,17 +1,37 @@
 <!-- Main content -->
-<div class="dashboard-content">
+<div class="dashboard-container">
     
   <!-- Dashboard tabs -->
-  <mat-tab-group mat-align-tabs="start">
-    <mat-tab label="First">
-      <button type="button" mat-button [routerLink]="['/', {outlets: {toolbox: ['menu-toolbox']} }]">
-        Toggle sidenav
-      </button>
-    </mat-tab>
+  <mat-tab-group #tabs mat-align-tabs="start">
+    <mat-tab *ngFor="let dashboard of dashboards">
+      <ng-template mat-tab-label>
+        {{ dashboard.title }}
+        <mat-icon class="tab-icon" (click)="editDashboard(dashboard.id)">settings</mat-icon>
+      </ng-template>
 
-    <mat-tab label="Second">Content 2</mat-tab>
-    
-    <mat-tab label="Third">Content 3</mat-tab>
-    
+      
+      <ng-template matTabContent>
+        <gridster [options]="options">
+          
+          <!-- charts -->
+          <gridster-item [id]="chart.chartConfigId" [item]="chart.gridConfig" *ngFor="let chart of dashboard.charts">
+            <!-- toolbar -->
+            <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="16px">
+              {{ chart.description }}
+              <div>
+                <mat-icon (click)="editChart(chart)">settings</mat-icon>
+                <mat-icon (click)="deleteChart(chart)">delete</mat-icon>
+              </div>
+            </div>
+            
+            <div class="gridster-item-content">
+              <app-chart></app-chart>
+            </div>
+          </gridster-item>
+
+        </gridster>
+      </ng-template>
+      
+    </mat-tab>
   </mat-tab-group>
 </div>
