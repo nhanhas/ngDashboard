@@ -1,3 +1,20 @@
-welcome:
-<br>
-<router-outlet></router-outlet>
+<mat-drawer-container class="app-container" autosize>
+  
+  <!-- main app content -->
+  <div class="app-content">
+    <router-outlet></router-outlet>
+  </div>
+  
+  <!-- toolbox -->
+  <mat-drawer #drawer class="app-sidenav" mode="side" position="end">
+    <router-outlet (activate)="drawer.toggle()" (deactivate)="drawer.close()" name="toolbox"></router-outlet>
+  </mat-drawer>
+
+</mat-drawer-container>
+
+<!-- main menu -->
+<app-menu></app-menu>
+
+
+
+
