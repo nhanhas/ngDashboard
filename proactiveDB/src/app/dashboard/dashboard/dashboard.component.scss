@@ -1,4 +1,10 @@
 .dashboard-container {
+  //position: relative;
+  // problems with toolbox
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   mat-tab-group{
     height: 100%;  
   }
@@ -11,4 +17,43 @@
 
 .tab-icon{
   margin-left: 24px;
+}
+
+// custom tab style
+::ng-deep .mat-tab-header {
+  width: 90%;
+  .mat-tab-labels {
+    height: 40px;
+    margin-right: 80px; // increment when more actions-tabs-container 
+    
+    .mat-tab-label {
+      height: 40px;
+    }
+    .mat-tab-label:after {
+      content: "";
+      height: 16px;
+      width: 1px;
+      position: absolute;
+      right: 0;
+      top: 12px;
+      background-color: #e2e3e3;
+    }
+    .mat-tab-label-content {
+      font-size: 12px;
+    }
+  
+  }
+}
+::ng-deep mat-ink-bar {
+  background-color: #326dff !important;
+}
+
+.actions-tabs-container {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  > div {
+    cursor: pointer;
+  }
+  z-index: 1;
 }

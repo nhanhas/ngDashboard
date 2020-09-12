@@ -88,7 +88,17 @@ export class DashboardComponent implements OnInit {
     this.dashboards = [
       {... new DashboardItem(), title: 'Dash 1', charts: [chart1, chart2], snapshots: [], visuals: []},
       {... new DashboardItem(), title: 'Dash 2', charts: [chart3], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 3', charts: [], snapshots: [], visuals: []}
+      {... new DashboardItem(), title: 'Dash 3', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), title: 'Dash 4', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), title: 'Dash 5', charts: [], snapshots: [], visuals: []},
+
+      {... new DashboardItem(), title: 'Dash 6', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), title: 'Dash 7', charts: [], snapshots: [], visuals: []},
+
+      {... new DashboardItem(), title: 'Dash 8', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), title: 'Dash 9', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), title: 'Dash 10', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), title: 'Dash 11', charts: [], snapshots: [], visuals: []},
     ];
 
     this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {

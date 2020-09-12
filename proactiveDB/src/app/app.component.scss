@@ -2,6 +2,7 @@
 .flex { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: stretch; }
 mat-toolbar { flex: 0 0 auto; }
 mat-drawer-container { flex: 1 1 0; }
+.app-main-container { flex: 1 1 0; }
 
 .app-container {
   margin-right: 48px;
@@ -11,6 +12,7 @@ mat-drawer-container { flex: 1 1 0; }
 .app-content {
   height: 100%;
   padding: 0 40px 0px;
+  max-height: 440px;
 }
 
 ::ng-deep .mat-drawer-content {
@@ -46,7 +48,7 @@ mat-drawer-container { flex: 1 1 0; }
 
 .adsense-below {  
 
-  padding: 16px 40px 16px;
+  //padding: 16px 40px 16px;
 
   > div:first-child {
     width: 250px;
@@ -61,3 +63,32 @@ mat-drawer-container { flex: 1 1 0; }
   }
 }
 
+
+
+
+
+// refactor
+.main-container {
+  //background: yellow;
+  padding: 0 0px 16px;
+  height: 100%;
+  margin: 0 40px;
+  > div:first-child {
+    position: relative;
+    height: 100%;
+    margin-bottom: 16px;
+    background-color: white;
+    padding: 0 16px 16px;
+  }
+}
+
+.toolbox-container {
+  background: white;
+  width: 250px;
+  height: 100%;
+}
+
+.toolbox-closed {
+  visibility: hidden;
+  width: 0;
+}

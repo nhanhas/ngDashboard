@@ -1,11 +1,11 @@
 <!-- Main content -->
-<div class="dashboard-container">
+<div class="dashboard-container" >
     
   <!-- Dashboard tabs -->
   <mat-tab-group #tabs mat-align-tabs="start">
-    <mat-tab *ngFor="let dashboard of dashboards">
+    <mat-tab #tab *ngFor="let dashboard of dashboards">
       <ng-template mat-tab-label>
-        {{ dashboard.title }}
+        <span [class.main-color]="tab.isActive">{{ dashboard.title }}</span>
         <mat-icon class="tab-icon" (click)="editDashboard(dashboard.id)">settings</mat-icon>
       </ng-template>
 
@@ -34,4 +34,10 @@
       
     </mat-tab>
   </mat-tab-group>
+
+  <!-- +New tab -->
+  <div class="actions-tabs-container main-color">
+    <div>+ New</div>
+  </div>
+
 </div>
