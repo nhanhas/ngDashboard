@@ -1,22 +1,40 @@
 .menu-container { 
   width: 48px;
-  background-color: #326dff;
+  background-color: white;
   position: fixed;
   right: 0;
   top: 202px;
   text-align: center;
-  padding: 16px 0;
+
+  -webkit-box-shadow: 3px 3px 6px 1px rgba(199,193,199,1);
+  -moz-box-shadow: 3px 3px 6px 1px rgba(199,193,199,1);
+  box-shadow: 3px 3px 6px 1px rgba(199,193,199,1);
 }
 
 .menu-sidenav-content {
   width: 48px;
 }
 
-mat-icon {
-  color: white;
-}
-
 .vertical-spacer {
   width: 32px;
   border-bottom: 1px solid white;
+}
+
+a{
+  position: relative;
+  width: 48px;  
+  padding: 10px 0;
+}
+
+
+a.is-active:before {
+  content: ' ';
+  position: absolute;
+  left: -3px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid white;
+  top: 12px;
 }

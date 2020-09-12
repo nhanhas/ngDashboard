@@ -1,18 +1,19 @@
-<div class="menu-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="16px">
+<div class="menu-container" fxLayout="column" fxLayoutAlign="start center">
 
   <!-- datasources -->
-  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'datasource-toolbox'} } ]">
-    <mat-icon>storage</mat-icon>
+
+  <a class="main-color" [routerLink]="['/', { outlets: {toolbox: 'datasource-toolbox'} } ]" routerLinkActive="white-color main-background-color is-active">
+    <i class="icon-lg ri-database-line"></i>
   </a>
 
   <!-- add charts -->
-  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'add-chart-toolbox'} } ]">
-    <mat-icon>addchart</mat-icon>
+  <a class="main-color" [routerLink]="['/', { outlets: {toolbox: 'add-chart-toolbox'} } ]" routerLinkActive="white-color main-background-color is-active">
+    <i class="icon-lg ri-pie-chart-line"></i>
   </a>
 
   <!-- add visual -->
-  <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: 'add-visual-toolbox'} } ]">
-    <mat-icon>extension</mat-icon>
+  <a class="main-color" [routerLink]="['/', { outlets: {toolbox: 'add-visual-toolbox'} } ]" routerLinkActive="white-color main-background-color is-active">
+    <i class="icon-lg ri-collage-line"></i>
   </a>
   
 </div>

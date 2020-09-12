@@ -13,3 +13,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background:
 .main-background-color {
   background-color: #326dff;
 }
+
+// icon sizes
+.icon-md {
+  font-size: 18px;
+}
+
+.icon-lg {
+  font-size: 24px;
+}
+
+/* override */
+a{
+  text-decoration: none;
+}

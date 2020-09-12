@@ -5,23 +5,29 @@
   <mat-tab-group #tabs mat-align-tabs="start">
     <mat-tab #tab *ngFor="let dashboard of dashboards">
       <ng-template mat-tab-label>
-        <span [class.main-color]="tab.isActive">{{ dashboard.title }}</span>
-        <mat-icon class="tab-icon" (click)="editDashboard(dashboard.id)">settings</mat-icon>
+        <i class="icon-md ri-edit-line tab-icon" (click)="editDashboard(dashboard.id)"></i>
+
+        <span [class.main-color]="tab.isActive">{{ dashboard.title }}</span>  
+
+        <i class="icon-md ri-close-line tab-icon"></i> 
       </ng-template>
 
       
       <ng-template matTabContent>
+        <!-- grid -->
         <gridster [options]="options">
           
           <!-- charts -->
           <gridster-item [id]="chart.chartConfigId" [item]="chart.gridConfig" *ngFor="let chart of dashboard.charts">
             <!-- toolbar -->
-            <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="16px">
-              {{ chart.description }}
-              <div>
-                <mat-icon (click)="editChart(chart)">settings</mat-icon>
-                <mat-icon (click)="deleteChart(chart)">delete</mat-icon>
+            <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
+              <!-- title and edit -->
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
+                <i class="icon-md ri-edit-line tab-icon" (click)="editChart(chart)"></i>
+                <span>{{ chart.description }}</span>
               </div>
+              <!-- remove -->
+              <i class="icon-md ri-close-line tab-icon" (click)="editChart(chart)"></i> 
             </div>
             
             <div class="gridster-item-content">
