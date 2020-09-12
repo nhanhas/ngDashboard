@@ -1,25 +1,60 @@
-<mat-drawer-container class="app-container" autosize>
-  
-  <!-- main app content -->
-  <div class="app-content">
-    <router-outlet></router-outlet>
-  </div>
-  
-  <!-- toolbox -->
-  <mat-drawer #drawer class="app-sidenav" mode="side" position="end">
-    <!-- close -->
-    <div class="close-btn">
-      <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: null} } ]">
-        <mat-icon>close</mat-icon>
-      </a>    
-    </div>
-    <router-outlet (activate)="drawer.toggle()" (deactivate)="drawer.close()" name="toolbox"></router-outlet>
-  </mat-drawer>
+<div class="flex">
 
-</mat-drawer-container>
+  <!-- main toolbar -->
+  <mat-toolbar>
+    <mat-toolbar-row class="main-toolbar">
+      <span>Proactive DB</span>
+    </mat-toolbar-row>
+
+    <mat-toolbar-row class="secondary-toolbar main-background-color white-color">
+      <span>Second Line</span>    
+    </mat-toolbar-row>
+  </mat-toolbar>
+  
+  <!-- Adds -->
+  <div class="adsense-above">
+    <app-adsense></app-adsense>
+  </div>
+
+  <!-- app brain -->
+  <mat-drawer-container class="app-container" autosize>
+    
+    <!-- main app content -->
+    <div class="app-content">
+      <router-outlet></router-outlet>
+    </div>
+    
+    <!-- toolbox -->
+    <mat-drawer #drawer class="app-sidenav" mode="side" position="end">
+      <!-- close -->
+      <div class="close-btn">
+        <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: null} } ]">
+          <mat-icon>close</mat-icon>
+        </a>    
+      </div>
+      <router-outlet (activate)="drawer.toggle()" (deactivate)="drawer.close()" name="toolbox"></router-outlet>
+    </mat-drawer>
+
+  </mat-drawer-container>
+
+
+  <!-- Adds -->
+  <div class="adsense-below" fxLayout="row" fxLayoutGap="16px">
+    <div>
+      <app-adsense></app-adsense>
+    </div>
+
+    <div fxFlex fxLayout="column" fxLayoutGap="16px">
+      <app-adsense></app-adsense>
+      <app-adsense></app-adsense>
+    </div>
+
+  </div>
+
+</div>
 
 <!-- main menu -->
-<app-menu></app-menu>
+<app-menu></app-menu> 
 
 
 

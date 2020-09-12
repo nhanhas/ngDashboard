@@ -14,13 +14,14 @@ import { AddVisualToolboxComponent } from './toolbox/add-visual-toolbox/add-visu
 import { ChartComponent } from './chart/chart.component';
 import { ChartsModule } from 'ng2-charts';
 import { ChartToolboxComponent } from './toolbox/chart-toolbox/chart-toolbox.component';
+import { AdsenseComponent } from './adsense/adsense.component';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent],
+  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent],
   imports: [
     CommonModule,
     MaterialModule,
@@ -35,7 +36,8 @@ import { ChartToolboxComponent } from './toolbox/chart-toolbox/chart-toolbox.com
     MenuComponent,
     GridsterModule,
     ChartsModule,
-    ChartComponent
+    ChartComponent,
+    AdsenseComponent
   ]
 })
 export class SharedModule { }

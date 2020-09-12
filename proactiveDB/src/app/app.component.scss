@@ -1,3 +1,8 @@
+// this will fit the all content inside div
+.flex { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: stretch; }
+mat-toolbar { flex: 0 0 auto; }
+mat-drawer-container { flex: 1 1 0; }
+
 .app-container {
   margin-right: 48px;
   height: 100%;
@@ -5,6 +10,11 @@
 
 .app-content {
   height: 100%;
+  padding: 0 40px 0px;
+}
+
+::ng-deep .mat-drawer-content {
+  background-color: white;
 }
 
 // toolbox
@@ -16,3 +26,38 @@
 .close-btn {
   float: right;
 }
+
+//toolbar
+.main-toolbar {
+  height: 48px;
+  background-color: white;
+}
+
+.secondary-toolbar {
+  height: 32px;
+}
+
+// addsense 
+.adsense-above {
+  max-width: 728px;
+  height: 90px;
+  padding: 16px 40px 16px;
+}
+
+.adsense-below {  
+
+  padding: 16px 40px 16px;
+
+  > div:first-child {
+    width: 250px;
+    height: 250px;
+  }
+
+  >div:last-of-type {
+    app-adsense{
+      max-width: 728px;
+      height: 90px;
+    }
+  }
+}
+
