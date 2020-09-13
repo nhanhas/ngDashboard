@@ -15,6 +15,7 @@ import { ChartComponent } from './chart/chart.component';
 import { ChartsModule } from 'ng2-charts';
 import { ChartToolboxComponent } from './toolbox/chart-toolbox/chart-toolbox.component';
 import { AdsenseComponent } from './adsense/adsense.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -28,7 +29,9 @@ import { AdsenseComponent } from './adsense/adsense.component';
     FlexLayoutModule,
     RouterModule,
     GridsterModule,
-    ChartsModule
+    ChartsModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     MaterialModule,
@@ -37,7 +40,10 @@ import { AdsenseComponent } from './adsense/adsense.component';
     GridsterModule,
     ChartsModule,
     ChartComponent,
-    AdsenseComponent
+    AdsenseComponent,
+    FormsModule,
+    ReactiveFormsModule
+
   ]
 })
 export class SharedModule { }

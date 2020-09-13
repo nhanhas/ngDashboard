@@ -5,6 +5,7 @@ import { DashboardItem } from 'src/app/core/models/DashboardItem';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { ChartComponent } from 'src/app/shared/chart/chart.component';
+import { DashboardService } from '../dashboard.service';
 
 export interface DashboardConfig {
   charts: []
@@ -19,44 +20,46 @@ export class DashboardComponent implements OnInit {
 
   @ViewChild('tabs')tabs: MatTabGroup;
 
-  options: GridsterConfig;
+  // grid options
+  options: GridsterConfig = {
+    gridType: GridType.Fixed,
+    enableEmptyCellDrop: true,      
+    emptyCellDropCallback: this.onDrop.bind(this),
+    draggable: {
+      enabled: true,
+      dropOverItems: true,
+    },
+    resizable: {
+      enabled: true,
+    },
+    minCols: 1,
+    maxCols: 100,
+    minRows: 1,
+    maxRows: 100,
+    maxItemCols: 100,
+    minItemCols: 1,
+    maxItemRows: 100,
+    minItemRows: 1,
+    maxItemArea: 2500,
+    minItemArea: 1,
+    defaultItemCols: 1,
+    defaultItemRows: 1,
+    fixedColWidth: 32,
+    fixedRowHeight: 32,
+    itemChangeCallback: this.itemChange.bind(this),
+    itemResizeCallback: this.itemResize.bind(this),
+  };
+
   dashboard: GridsterItem[] = [];
 
   // dashboard from server
   dashboards: DashboardItem[] = [];
 
   constructor(
-    private router: Router) { }
+    private router: Router,
+    private dashboardService: DashboardService) { }
 
   ngOnInit() {
-    this.options = {
-      gridType: GridType.Fixed,
-      enableEmptyCellDrop: true,      
-			emptyCellDropCallback: this.onDrop.bind(this),
-      draggable: {
-        enabled: true,
-        dropOverItems: true,
-      },
-      resizable: {
-        enabled: true,
-      },
-      minCols: 1,
-      maxCols: 100,
-      minRows: 1,
-      maxRows: 100,
-      maxItemCols: 100,
-      minItemCols: 1,
-      maxItemRows: 100,
-      minItemRows: 1,
-      maxItemArea: 2500,
-      minItemArea: 1,
-      defaultItemCols: 1,
-      defaultItemRows: 1,
-      fixedColWidth: 32,
-      fixedRowHeight: 32,
-      itemChangeCallback: this.itemChange.bind(this),
-      itemResizeCallback: this.itemResize.bind(this),
-    };
 
     this.dashboard = [
       {cols: 2, rows: 1, y: 0, x: 0},
@@ -71,6 +74,7 @@ export class DashboardComponent implements OnInit {
     const chart1: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       chartConfigId: 1,
       description: 'chart 1',
+      chartType: 'line',
       posX: 0, posY: 0,
       width: 10, heigth: 6
     })
@@ -78,13 +82,14 @@ export class DashboardComponent implements OnInit {
     const chart2: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       chartConfigId: 2,
       description: 'chart 2',
+      chartType: 'pie',
       posX: 4, posY: 6,
       width: 10, heigth: 6
     })
 
     const chart3: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       chartConfigId: 3,
-      description: 'chart 3',
+      description: 'bar',
       posX: 1, posY: 2,
       width: 2, heigth: 1
     })
@@ -116,6 +121,10 @@ export class DashboardComponent implements OnInit {
   itemChange(item, itemComponent) {
     //console.info('itemChanged', item, itemComponent);
     const itemChanged = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.chartConfigId === +itemComponent.el.id);
+    
+    // TODO check types for rest of element types
+    this.updateChartConfigs();
+
   }
 
   itemResize(item, itemComponent) {
@@ -145,32 +154,57 @@ export class DashboardComponent implements OnInit {
    * Chart
    */
   editChart(chart: ChartConfigItem) {
-    event.stopPropagation();
-    // TODO - Toolbox service with object
+    event.stopImmediatePropagation();
+    
+    // set chart in edition
+    this.dashboardService.chart$.next(chart);
+
     this.router.navigate(['/', { outlets: {toolbox: 'chart-toolbox'} } ])
   }
 
   deleteChart(chart: ChartConfigItem) {
-    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    const itemDeleted = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.chartConfigId === chart.chartConfigId);
+    this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
+
+    this.changedOptions();
+    
   }
 
+  // on drop a new item into dashboard
   onDrop(ev, emptyCellItem: GridsterItem) {    
     if(!this.dashboards){ return }
-    // TODO check what dashboard is visible
-    const componentType = ev.dataTransfer.getData("widgetIdentifier");
-    const chart3: ChartConfigItem = Object.assign(new ChartConfigItem(), {
+    // TODO check for all types of elements
+    const chartType = ev.dataTransfer.getData("chartType");
+    const newChart: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       chartConfigId: 3,
-      description: 'componentType',
+      description: chartType,
       posX: emptyCellItem.x, posY: emptyCellItem.y,
       width: 5, heigth: 5
     })
-		this.dashboards[this.activeDashboard].charts.push(chart3);
+		this.dashboards[this.activeDashboard].charts.push(newChart);
 
+    // edit new chart in toolbox 
+    this.editChart(newChart);
+
+    // update grister-item with chartConfig positioning/size
     return this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
       chart.gridConfig = { x: chart.posX, y: chart.posY, cols: chart.width, rows: chart.heigth }
       }) 
-    )
+    );
+
 	}
+
+  // update chartConfig with grid positioning/size
+  private updateChartConfigs() {
+    this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
+      chart.posX = chart.gridConfig.x;
+      chart.posY = chart.gridConfig.y;
+      chart.width = chart.gridConfig.cols;
+      chart.heigth = chart.gridConfig.rows;
+    }));
+  }
 
   // get the selected dasbhoard
   get activeDashboard(): number {

@@ -26,7 +26,7 @@ export class AddChartToolboxComponent implements OnInit {
   }
 
   onDrag(event, identifier) {
-		event.dataTransfer.setData('widgetIdentifier', identifier);
+		event.dataTransfer.setData('chartType', identifier);
 	}
 
 }

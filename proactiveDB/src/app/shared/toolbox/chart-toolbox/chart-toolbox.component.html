@@ -1,1 +1,75 @@
-<p>chart-toolbox works!</p>
+<div class="toolbox-header">
+  <h4 class="main-color">Chart</h4>
+  <hr> 
+</div>
+
+<div class="toolbox-body">
+
+  <mat-accordion multi="true">
+
+    <!-- chart types -->
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header class="main-color">
+        Configurations
+      </mat-expansion-panel-header>
+      
+      <div *ngIf="chart">
+        <label>
+          Name:
+          <input [(ngModel)]="chart.description">
+        </label>
+      </div>
+
+      <!-- configuration template according to chartType -->
+      <ng-container [ngSwitch]="chart?.chartType">
+        <ng-container *ngSwitchCase="'line'">
+          <ng-container *ngTemplateOutlet="lineConfig; context: {chart: chart}"></ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'bar'">
+          <ng-container *ngTemplateOutlet="barConfig; context: {chart: chart}"></ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'pie'">
+          <ng-container *ngTemplateOutlet="pieConfig; context: {chart: chart}"></ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'radar'">
+          <ng-container *ngTemplateOutlet="radarConfig; context: {chart: chart}"></ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'polar'">
+          <ng-container *ngTemplateOutlet="polarConfig; context: {chart: chart}"></ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'bubble'">
+          <ng-container *ngTemplateOutlet="bubbleConfig; context: {chart: chart}"></ng-container>
+        </ng-container>
+      </ng-container>
+  
+    </mat-expansion-panel>
+    
+  </mat-accordion>
+
+</div>
+
+
+<!-- chart widget template -->
+<ng-template #lineConfig let-chart="chart">
+  
+</ng-template>
+
+<ng-template #barConfig let-chart="chart">
+
+</ng-template>
+
+<ng-template #pieConfig let-chart="chart">
+
+</ng-template>
+
+<ng-template #radarConfig let-chart="chart">
+
+</ng-template>
+
+<ng-template #polarConfig let-chart="chart">
+
+</ng-template>
+
+<ng-template #bubbleConfig let-chart="chart">
+
+</ng-template>
