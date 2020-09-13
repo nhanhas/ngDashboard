@@ -7,9 +7,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AddChartToolboxComponent implements OnInit {
 
+  chartTypes: any[] = [];
+
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
+    // TODO - load chart types from api
+    this.chartTypes = [
+      { chartType: 'line'},
+      { chartType: 'bar'},
+      { chartType: 'pie'},
+      { chartType: 'radar'},
+      { chartType: 'polar'},
+      { chartType: 'bubble' }
+    ]
+
   }
+
+  onDrag(event, identifier) {
+		event.dataTransfer.setData('widgetIdentifier', identifier);
+	}
 
 }

@@ -1,1 +1,66 @@
-<p>add-chart-toolbox works!</p>
+<div class="toolbox-header">
+  <h4 class="main-color">Add new chart</h4>
+  <hr> 
+</div>
+
+<div class="toolbox-body">
+
+  <mat-accordion multi="true">
+
+    <!-- chart types -->
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header class="main-color">
+        Chart types
+      </mat-expansion-panel-header>
+      
+      
+      <ng-container *ngFor="let chartType of chartTypes"> 
+        <ng-content *ngTemplateOutlet="chartWidget; context: {type: chartType}"></ng-content>
+      </ng-container>
+      
+  
+    </mat-expansion-panel>
+    
+
+    <!-- other elements -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header class="main-color">
+        Other elements
+      </mat-expansion-panel-header>
+  
+      This the expansion 2 content
+  
+    </mat-expansion-panel>
+  
+  </mat-accordion>
+
+</div>
+
+
+<!-- chart widget template -->
+<ng-template #chartWidget let-type="type">
+  <ng-container [ngSwitch]="type.chartType">
+    <div class="widget text-color">
+      <div class="widget-icon white-color main-background-color" draggable="true" (dragstart)="onDrag($event, type.chartType)">
+        <i *ngSwitchCase="'line'" class="icon-lg ri-line-chart-line"></i>
+        <i *ngSwitchCase="'bar'" class="icon-lg ri-bar-chart-line"></i>
+        <i *ngSwitchCase="'pie'" class="icon-lg ri-pie-chart-line"></i>
+        <i *ngSwitchCase="'radar'" class="icon-lg ri-pie-chart-box-line"></i>
+        <i *ngSwitchCase="'polar'" class="icon-lg ri-pie-chart-box-line"></i>
+        <i *ngSwitchCase="'bubble'" class="icon-lg ri-bubble-chart-line"></i>
+
+        <i *ngSwitchDefault class="icon-lg ri-question-line"></i>
+      </div>
+      
+      <span *ngSwitchCase="'line'">Line</span>
+      <span *ngSwitchCase="'bar'">Bar</span>
+      <span *ngSwitchCase="'pie'">Pie</span>
+      <span *ngSwitchCase="'radar'">Radar</span>
+      <span *ngSwitchCase="'polar'">Polar</span>
+      <span *ngSwitchCase="'bubble'">Bubble</span>
+
+      <span *ngSwitchDefault>Unknown</span>
+    </div>
+    
+  </ng-container>
+</ng-template>

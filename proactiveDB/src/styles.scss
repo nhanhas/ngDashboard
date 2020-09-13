@@ -9,6 +9,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background:
 .white-color {
   color: white;
 }
+.text-color {
+  color: rgb(0 0 0 / 54%);
+}
 
 .main-background-color {
   background-color: #326dff;
@@ -27,3 +30,28 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background:
 a{
   text-decoration: none;
 }
+
+/* globals */
+.toolbox-header {
+  padding: 8px 16px;
+  h4{
+    margin: 0px 0 8px;
+  }
+  hr {
+    border-color: #326dff;
+    opacity: .3;
+  }
+}
+
+.toolbox-body {
+  padding: 0 16px;
+}
+
+/* Material overrides */
+mat-expansion-panel {
+  box-shadow: none !important;
+}
+mat-expansion-panel-header {
+  padding-left: 0px !important;
+}
+.mat-expansion-panel-body { padding: 0 !important }

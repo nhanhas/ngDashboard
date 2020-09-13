@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DashboardItem } from 'src/app/core/models/DashboardItem';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { ChartComponent } from 'src/app/shared/chart/chart.component';
 
 export interface DashboardConfig {
   charts: []
@@ -30,8 +31,11 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.options = {
       gridType: GridType.Fixed,
+      enableEmptyCellDrop: true,      
+			emptyCellDropCallback: this.onDrop.bind(this),
       draggable: {
         enabled: true,
+        dropOverItems: true,
       },
       resizable: {
         enabled: true,
@@ -150,6 +154,23 @@ export class DashboardComponent implements OnInit {
     event.stopPropagation();
   }
 
+  onDrop(ev, emptyCellItem: GridsterItem) {    
+    if(!this.dashboards){ return }
+    // TODO check what dashboard is visible
+    const componentType = ev.dataTransfer.getData("widgetIdentifier");
+    const chart3: ChartConfigItem = Object.assign(new ChartConfigItem(), {
+      chartConfigId: 3,
+      description: 'componentType',
+      posX: emptyCellItem.x, posY: emptyCellItem.y,
+      width: 5, heigth: 5
+    })
+		this.dashboards[this.activeDashboard].charts.push(chart3);
+
+    return this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
+      chart.gridConfig = { x: chart.posX, y: chart.posY, cols: chart.width, rows: chart.heigth }
+      }) 
+    )
+	}
 
   // get the selected dasbhoard
   get activeDashboard(): number {
