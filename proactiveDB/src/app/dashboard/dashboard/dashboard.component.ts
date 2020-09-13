@@ -167,8 +167,6 @@ export class DashboardComponent implements OnInit {
 
     const itemDeleted = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.chartConfigId === chart.chartConfigId);
     this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
-
-    this.changedOptions();
     
   }
 
@@ -179,7 +177,8 @@ export class DashboardComponent implements OnInit {
     const chartType = ev.dataTransfer.getData("chartType");
     const newChart: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       chartConfigId: 3,
-      description: chartType,
+      chartType: chartType,
+      description: 'new',
       posX: emptyCellItem.x, posY: emptyCellItem.y,
       width: 5, heigth: 5
     })

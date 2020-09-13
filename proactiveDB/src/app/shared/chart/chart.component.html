@@ -1,13 +1,98 @@
 <div>
   <div style="display: block">
+    <!-- pick the right chart -->
+    <ng-container [ngSwitch]="chart.chartType">
+      <ng-container *ngSwitchCase="'line'">
+        <ng-container *ngTemplateOutlet="line; context: {chart: chart}"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'bar'">
+        <ng-container *ngTemplateOutlet="bar; context: {chart: chart}"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'pie'">
+        <ng-container *ngTemplateOutlet="pie; context: {chart: chart}"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'radar'">
+        <ng-container *ngTemplateOutlet="radar; context: {chart: chart}"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'polar'">
+        <ng-container *ngTemplateOutlet="polar; context: {chart: chart}"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'bubble'">
+        <ng-container *ngTemplateOutlet="bubble; context: {chart: chart}"></ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<!-- chart templates -->
+<ng-template #line let-chart="chart">
   <canvas baseChart 
-      [datasets]="lineChartData" 
-      [labels]="lineChartLabels" 
-      [options]="lineChartOptions"
-      [colors]="lineChartColors" 
-      [legend]="lineChartLegend" 
-      [chartType]="lineChartType" 
-      [plugins]="lineChartPlugins">
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions"
+    [colors]="chartColors" 
+    [legend]="chartLegend" 
+    chartType="line" 
+    [plugins]="chartPlugins">
   </canvas>
-</div>
-</div>
+</ng-template>
+
+<ng-template #bar let-chart="chart">
+  <canvas baseChart 
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions"
+    [colors]="chartColors" 
+    [legend]="chartLegend" 
+    chartType="bar" 
+    [plugins]="chartPlugins">
+  </canvas>
+</ng-template>
+
+<ng-template #pie let-chart="chart">
+  <canvas baseChart 
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions"
+    [colors]="chartColors" 
+    [legend]="chartLegend" 
+    chartType="pie" 
+    [plugins]="chartPlugins">
+  </canvas>
+</ng-template>
+
+<ng-template #radar let-chart="chart">
+  <canvas baseChart 
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions"
+    [colors]="chartColors" 
+    [legend]="chartLegend" 
+    chartType="radar" 
+    [plugins]="chartPlugins">
+  </canvas>
+</ng-template>
+
+<ng-template #polar let-chart="chart">
+  <canvas baseChart 
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions"
+    [colors]="chartColors" 
+    [legend]="chartLegend" 
+    chartType="polar" 
+    [plugins]="chartPlugins">
+  </canvas>
+</ng-template>
+
+<ng-template #bubble let-chart="chart">
+  <canvas baseChart 
+    [datasets]="chartData" 
+    [labels]="chartLabels" 
+    [options]="chartOptions"
+    [colors]="chartColors" 
+    [legend]="chartLegend" 
+    chartType="bubble" 
+    [plugins]="chartPlugins">
+  </canvas>
+</ng-template>

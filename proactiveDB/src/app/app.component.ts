@@ -7,8 +7,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.scss'],
   animations: [
     trigger('openClose', [
-      state('true', style({ width: '*', visibility: '*' })),
-      state('false', style({ width: '0px', visibility: 'hidden'  })),
+      state('true', style({   display: '*' })),
+      state('false', style({  display: 'none'  })),
       transition('false <=> true', animate(100))
     ])
   ],
@@ -24,4 +24,3 @@ export class AppComponent implements OnInit {
   }
 
 }
-
