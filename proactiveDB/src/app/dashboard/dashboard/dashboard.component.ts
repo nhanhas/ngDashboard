@@ -159,7 +159,7 @@ export class DashboardComponent implements OnInit {
     // set chart in edition
     this.dashboardService.chart$.next(chart);
 
-    this.router.navigate(['/', { outlets: {toolbox: 'chart-toolbox'} } ])
+    this.router.navigate(['/', { outlets: {toolbox: 'widget-toolbox'} } ])
   }
 
   deleteChart(chart: ChartConfigItem) {

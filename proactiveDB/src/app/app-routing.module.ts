@@ -8,6 +8,7 @@ import { UserToolboxComponent } from './shared/toolbox/user-toolbox/user-toolbox
 import { AddChartToolboxComponent } from './shared/toolbox/add-chart-toolbox/add-chart-toolbox.component';
 import { AddVisualToolboxComponent } from './shared/toolbox/add-visual-toolbox/add-visual-toolbox.component';
 import { ChartToolboxComponent } from './shared/toolbox/chart-toolbox/chart-toolbox.component';
+import { WidgetToolboxComponent } from './shared/toolbox/widget-toolbox/widget-toolbox.component';
 
 
 const routes: Routes = [
@@ -44,6 +45,11 @@ const routes: Routes = [
   { 
     path: 'chart-toolbox',
     component: ChartToolboxComponent,
+    outlet: 'toolbox'
+  },
+  { 
+    path: 'widget-toolbox',
+    component: WidgetToolboxComponent,
     outlet: 'toolbox'
   },
   { 

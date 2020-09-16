@@ -17,13 +17,14 @@ import { ChartToolboxComponent } from './toolbox/chart-toolbox/chart-toolbox.com
 import { AdsenseComponent } from './adsense/adsense.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserInfoComponent } from './user-info/user-info.component';
+import { WidgetToolboxComponent } from './toolbox/widget-toolbox/widget-toolbox.component';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent],
+  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent],
   imports: [
     CommonModule,
     MaterialModule,
