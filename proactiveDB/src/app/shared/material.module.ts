@@ -5,6 +5,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+
 
 
 
@@ -17,14 +20,18 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatSidenavModule,
     MatIconModule,
     MatToolbarModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatMenuModule,
+    MatButtonModule
   ],
   exports: [
     MatTabsModule,
     MatSidenavModule,
     MatIconModule,
     MatToolbarModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatMenuModule,
+    MatButtonModule
   ]
 })
 export class MaterialModule { }

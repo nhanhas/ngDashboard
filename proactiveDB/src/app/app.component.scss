@@ -4,27 +4,6 @@ mat-toolbar { flex: 0 0 auto; }
 mat-drawer-container { flex: 1 1 0; }
 .app-main-container { flex: 1 1 0; }
 
-.app-container {
-  margin-right: 48px;
-  height: 100%;
-}
-
-.app-content {
-  height: 100%;
-  padding: 0 40px 0px;
-  max-height: 440px;
-}
-
-::ng-deep .mat-drawer-content {
-  background-color: white;
-}
-
-// toolbox
-.app-sidenav {
-  padding: 20px;
-  width: 300px;
-}
-
 .close-btn {
   float: right;
 }
@@ -33,10 +12,12 @@ mat-drawer-container { flex: 1 1 0; }
 .main-toolbar {
   height: 48px;
   background-color: white;
+  padding: 0 42px;
 }
 
 .secondary-toolbar {
   height: 32px;
+  padding: 0 42px;
 }
 
 // addsense 
@@ -64,10 +45,6 @@ mat-drawer-container { flex: 1 1 0; }
 }
 
 
-
-
-
-// refactor
 .main-container {
   //background: yellow;
   padding: 0 0px 16px;

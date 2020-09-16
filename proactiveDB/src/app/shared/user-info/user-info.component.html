@@ -1,0 +1,11 @@
+<ng-container *ngIf="userInfo">
+  <span class="text-color">Hi, {{ userInfo.name }}! </span>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <i class="icon-lg ri-user-6-fill"></i>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>Item 1</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>
+</ng-container>

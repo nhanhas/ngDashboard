@@ -2,8 +2,12 @@
 
   <!-- main toolbar -->
   <mat-toolbar>
-    <mat-toolbar-row class="main-toolbar">
+    <mat-toolbar-row class="main-toolbar" fxLayout="row" fxLayoutAlign="space-between center">
+      <!-- logo -->
       <span>Proactive DB</span>
+
+      <!-- user info -->
+      <app-user-info></app-user-info>
     </mat-toolbar-row>
 
     <mat-toolbar-row class="secondary-toolbar main-background-color white-color">

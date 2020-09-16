@@ -16,13 +16,14 @@ import { ChartsModule } from 'ng2-charts';
 import { ChartToolboxComponent } from './toolbox/chart-toolbox/chart-toolbox.component';
 import { AdsenseComponent } from './adsense/adsense.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserInfoComponent } from './user-info/user-info.component';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent],
+  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent],
   imports: [
     CommonModule,
     MaterialModule,
@@ -42,7 +43,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ChartComponent,
     AdsenseComponent,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    UserInfoComponent
 
   ]
 })

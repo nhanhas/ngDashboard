@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, delay } from 'rxjs/operators';
 
 
@@ -8,6 +8,9 @@ import { tap, delay } from 'rxjs/operators';
 })
 export class AuthService {
   isLoggedIn = false;
+
+  // user info => should a class
+  user$ = new BehaviorSubject<{ id: string, name: string }>({id: '1', name: 'Miguel'});
 
   // store the URL so we can redirect after logging in
   redirectUrl: string;
@@ -19,6 +22,7 @@ export class AuthService {
     return of(true)
     .pipe(
       delay(1000),
+      tap(val => this.user$.next({id: '1', name: 'should update with something'})),
       tap(val => this.isLoggedIn = true)
     );
   }
