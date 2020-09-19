@@ -18,7 +18,7 @@
         <gridster [options]="options">
           
           <!-- charts -->
-          <gridster-item [id]="chart.chartConfigId" [item]="chart.gridConfig" *ngFor="let chart of dashboard.charts">
+          <gridster-item [id]="chart.chartConfigId" [item]="chart.gridConfig" [class.item-editing]="editingChartId === chart.chartConfigId" *ngFor="let chart of dashboard.charts">
             <!-- toolbar -->
             <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- title and edit -->

@@ -6,8 +6,8 @@
     <i class="icon-lg ri-database-line"></i>
   </a>
 
-  <!-- add charts -->
-  <a class="main-color" [routerLink]="['/', { outlets: {toolbox: 'widget-toolbox'} } ]" routerLinkActive="white-color main-background-color is-active">
+  <!-- add widgets -->
+  <a class="main-color" [routerLink]="['/', { outlets: {toolbox: 'widget-toolbox'} } ]" routerLinkActive="white-color main-background-color is-active" (click)="dashboardService.clearWidgetsEdition()">
     <i class="icon-lg ri-pie-chart-line"></i>
   </a>
 

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
@@ -13,7 +14,7 @@ export interface ChartTypes {
   templateUrl: './widget-toolbox.component.html',
   styleUrls: ['./widget-toolbox.component.scss']
 })
-export class WidgetToolboxComponent implements OnInit {
+export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   // supported chart types
   chartTypes: ChartTypes[] = [];
@@ -24,9 +25,11 @@ export class WidgetToolboxComponent implements OnInit {
   // visual item to edit
   visual: any;
 
+  // unsubscribe
+  destroy$ = new Subject<boolean>();
+
   constructor(
-    private dashboardService: DashboardService
-  ) { }
+    private dashboardService: DashboardService) { }
 
   ngOnInit() {
 
@@ -43,12 +46,21 @@ export class WidgetToolboxComponent implements OnInit {
     // widget in edition [chart]
     this.dashboardService.chart$
       .pipe(
+        takeUntil(this.destroy$),
+
         tap(_ => this.reset())
       )
       .subscribe((value: ChartConfigItem) => this.chart = value);
 
-    
+  }
 
+  ngOnDestroy() {
+    // unsubscribe
+    this.destroy$.next(true);
+    this.destroy$.complete();
+
+    // clear widget in edition
+    this.dashboardService.clearWidgetsEdition();
   }
 
   // reset elements in edition

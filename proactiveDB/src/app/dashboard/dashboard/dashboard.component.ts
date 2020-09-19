@@ -169,6 +169,24 @@ export class DashboardComponent implements OnInit {
     this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
     
   }
+  
+  // get id of chart in edition
+  get editingChartId(): number {
+    if(!this.dashboardService.chart$.value) { return 0 }
+    
+    const { chartConfigId } = this.dashboardService.chart$.value;
+    return chartConfigId || 0;
+  }
+
+  // update chartConfig with grid positioning/size
+  private updateChartConfigs() {
+    this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
+      chart.posX = chart.gridConfig.x;
+      chart.posY = chart.gridConfig.y;
+      chart.width = chart.gridConfig.cols;
+      chart.heigth = chart.gridConfig.rows;
+    }));
+  }
 
   // on drop a new item into dashboard
   onDrop(ev, emptyCellItem: GridsterItem) {    
@@ -194,16 +212,6 @@ export class DashboardComponent implements OnInit {
     );
 
 	}
-
-  // update chartConfig with grid positioning/size
-  private updateChartConfigs() {
-    this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-      chart.posX = chart.gridConfig.x;
-      chart.posY = chart.gridConfig.y;
-      chart.width = chart.gridConfig.cols;
-      chart.heigth = chart.gridConfig.rows;
-    }));
-  }
 
   // get the selected dasbhoard
   get activeDashboard(): number {
