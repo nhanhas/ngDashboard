@@ -1,6 +1,7 @@
 export class DashboardItem {
-  
-    title: string = '';
+    
+    Id: number;
+    Name: string = '';
     charts = [];
     snapshots = [];
     visuals = [];

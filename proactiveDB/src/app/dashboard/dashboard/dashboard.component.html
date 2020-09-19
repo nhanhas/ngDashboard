@@ -5,9 +5,9 @@
   <mat-tab-group #tabs mat-align-tabs="start">
     <mat-tab #tab *ngFor="let dashboard of dashboards">
       <ng-template mat-tab-label>
-        <i class="icon-md ri-edit-line tab-icon" (click)="editDashboard(dashboard.id)"></i>
+        <i class="icon-md ri-edit-line tab-icon" (click)="editDashboard(dashboard.Id)"></i>
 
-        <span [class.main-color]="tab.isActive">{{ dashboard.title }}</span>  
+        <span [class.main-color]="tab.isActive">{{ dashboard.Name }}</span>  
 
         <i class="icon-md ri-close-line tab-icon"></i> 
       </ng-template>
@@ -15,16 +15,16 @@
       
       <ng-template matTabContent>
         <!-- grid -->
-        <gridster [options]="options">
+        <gridster [options]="options" *ngIf="ready">
           
           <!-- charts -->
-          <gridster-item [id]="chart.chartConfigId" [item]="chart.gridConfig" [class.item-editing]="editingChartId === chart.chartConfigId" *ngFor="let chart of dashboard.charts">
+          <gridster-item [id]="chart.ChartConfigId" [item]="chart.gridConfig" [class.item-editing]="editingChartId === chart.ChartConfigId" *ngFor="let chart of dashboard.charts">
             <!-- toolbar -->
             <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- title and edit -->
               <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
                 <i class="icon-md ri-edit-line tab-icon" (click)="editChart(chart)"></i>
-                <span>{{ chart.description }}</span>
+                <span>{{ chart.Description }}</span>
               </div>
               <!-- remove -->
               <i class="icon-md ri-close-line tab-icon" (click)="deleteChart(chart)"></i> 

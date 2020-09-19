@@ -1,7 +1,7 @@
 <div>
   <div style="display: block">
     <!-- pick the right chart -->
-    <ng-container [ngSwitch]="chart.chartType">
+    <ng-container [ngSwitch]="chart.ChartType">
       <ng-container *ngSwitchCase="'line'">
         <ng-container *ngTemplateOutlet="line; context: {chart: chart}"></ng-container>
       </ng-container>

@@ -6,6 +6,9 @@ import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { ChartComponent } from 'src/app/shared/chart/chart.component';
 import { DashboardService } from '../dashboard.service';
+import { ApiService } from 'src/app/core/api.service';
+import { forkJoin, Observable, of } from 'rxjs';
+import { filter, map, mergeMap, tap } from 'rxjs/operators';
 
 export interface DashboardConfig {
   charts: []
@@ -55,8 +58,11 @@ export class DashboardComponent implements OnInit {
   // dashboard from server
   dashboards: DashboardItem[] = [];
 
+  ready: boolean;
+
   constructor(
     private router: Router,
+    private apiService: ApiService,
     private dashboardService: DashboardService) { }
 
   ngOnInit() {
@@ -66,10 +72,67 @@ export class DashboardComponent implements OnInit {
       {cols: 2, rows: 2, y: 0, x: 2}
     ];
 
+    // load dashboards
+    this.loadDashboards()
+      .pipe(
+        filter((value: DashboardItem[]) => value && !!value.length),
+
+        tap((value: DashboardItem[]) => this.dashboards = value),
+
+        // load items by dashboard
+        mergeMap((value: DashboardItem[]) => {
+          // prepare chart request for each dasbhoard item
+          const charts = value.map((dashboard: DashboardItem) => {
+            return this.loadChartsByDashboard(dashboard.Id)
+              .pipe(
+                tap((charts: ChartConfigItem[]) => {
+                  
+                  // assign charts to dashboard
+                  dashboard.charts = charts
+                })
+              )
+          });
+
+          // TODO - add more items here to load and then , forkJoin
+          return forkJoin([...charts])
+            .pipe(
+              map(_ => value)
+            );
+        })
+      )      
+      .subscribe((value: DashboardItem[]) => {
+        // update charts dashboard due to grister config
+        this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
+          chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth }
+          }) 
+        )
+
+        this.ready = true;
+      })
+
     // setup dashboards 
-    this.setupDashboards();
+    //this.setupDashboards();
   }
   
+  // load dashboards from server
+  private loadDashboards(): Observable<DashboardItem[]> {
+    return this.apiService.loadDashboards()
+      .pipe(
+        // parse to known model
+        map((value: any[]) => value.map(item =>  Object.assign(new DashboardItem(), item)))
+      )      
+  }
+
+  // load chart by dashboard id
+  private loadChartsByDashboard(id: number): Observable<ChartConfigItem[]>{
+    return this.apiService.loadChartByDashboard(id)
+      .pipe(
+         // parse to known model
+         map((value: any[]) => value.map(item =>  Object.assign(new ChartConfigItem(), item)))        
+      )
+  }
+
+  // development only
   private setupDashboards() {
     const chart1: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       chartConfigId: 1,
@@ -95,23 +158,23 @@ export class DashboardComponent implements OnInit {
     })
 
     this.dashboards = [
-      {... new DashboardItem(), title: 'Dash 1', charts: [chart1, chart2], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 2', charts: [chart3], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 3', charts: [], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 4', charts: [], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 5', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 1', charts: [chart1, chart2], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 2', charts: [chart3], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 3', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 4', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 5', charts: [], snapshots: [], visuals: []},
 
-      {... new DashboardItem(), title: 'Dash 6', charts: [], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 7', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 6', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 7', charts: [], snapshots: [], visuals: []},
 
-      {... new DashboardItem(), title: 'Dash 8', charts: [], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 9', charts: [], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 10', charts: [], snapshots: [], visuals: []},
-      {... new DashboardItem(), title: 'Dash 11', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 8', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 9', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 10', charts: [], snapshots: [], visuals: []},
+      {... new DashboardItem(), Name: 'Dash 11', charts: [], snapshots: [], visuals: []},
     ];
 
     this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-      chart.gridConfig = { x: chart.posX, y: chart.posY, cols: chart.width, rows: chart.heigth }
+      chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth }
       }) 
     )
 
@@ -120,15 +183,15 @@ export class DashboardComponent implements OnInit {
 
   itemChange(item, itemComponent) {
     //console.info('itemChanged', item, itemComponent);
-    const itemChanged = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.chartConfigId === +itemComponent.el.id);
-    
+    const itemChanged = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === +itemComponent.el.id);
+    console.log(itemChanged);
     // TODO check types for rest of element types
     this.updateChartConfigs();
 
   }
 
   itemResize(item, itemComponent) {
-    const itemChanged = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.chartConfigId === +itemComponent.el.id);
+    const itemChanged = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === +itemComponent.el.id);
   }
 
   changedOptions() {
@@ -165,7 +228,7 @@ export class DashboardComponent implements OnInit {
   deleteChart(chart: ChartConfigItem) {
     event.stopImmediatePropagation();
 
-    const itemDeleted = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.chartConfigId === chart.chartConfigId);
+    const itemDeleted = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === chart.ChartConfigId);
     this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
     
   }
@@ -174,17 +237,17 @@ export class DashboardComponent implements OnInit {
   get editingChartId(): number {
     if(!this.dashboardService.chart$.value) { return 0 }
     
-    const { chartConfigId } = this.dashboardService.chart$.value;
-    return chartConfigId || 0;
+    const { ChartConfigId } = this.dashboardService.chart$.value;
+    return ChartConfigId || 0;
   }
 
   // update chartConfig with grid positioning/size
   private updateChartConfigs() {
     this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-      chart.posX = chart.gridConfig.x;
-      chart.posY = chart.gridConfig.y;
-      chart.width = chart.gridConfig.cols;
-      chart.heigth = chart.gridConfig.rows;
+      chart.PosX = chart.gridConfig.x;
+      chart.PosY = chart.gridConfig.y;
+      chart.Width = chart.gridConfig.cols;
+      chart.Heigth = chart.gridConfig.rows;
     }));
   }
 
@@ -194,11 +257,11 @@ export class DashboardComponent implements OnInit {
     // TODO check for all types of elements
     const chartType = ev.dataTransfer.getData("chartType");
     const newChart: ChartConfigItem = Object.assign(new ChartConfigItem(), {
-      chartConfigId: 3,
-      chartType: chartType,
-      description: 'new',
-      posX: emptyCellItem.x, posY: emptyCellItem.y,
-      width: 5, heigth: 5
+      ChartConfigId: 3,
+      ChartType: chartType,
+      Description: 'new',
+      PosX: emptyCellItem.x, PosY: emptyCellItem.y,
+      Width: 5, Heigth: 5
     })
 		this.dashboards[this.activeDashboard].charts.push(newChart);
 
@@ -207,7 +270,7 @@ export class DashboardComponent implements OnInit {
 
     // update grister-item with chartConfig positioning/size
     return this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-      chart.gridConfig = { x: chart.posX, y: chart.posY, cols: chart.width, rows: chart.heigth }
+      chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth }
       }) 
     );
 

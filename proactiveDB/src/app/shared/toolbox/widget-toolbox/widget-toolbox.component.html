@@ -45,7 +45,7 @@
     <div class="widget text-color">
       <div         
         class="widget-icon white-color main-background-color" 
-        [class.green-background-color]="chart && type.chartType === chart.chartType"
+        [class.green-background-color]="chart && type.chartType === chart.ChartType"
         [ngClass]="{ 
           'disabled-background-color disabled': isChartWidgetDisabled(type)
         }"
@@ -85,7 +85,7 @@
 
     <label>
       Name:
-      <input [(ngModel)]="chart.description">
+      <input [(ngModel)]="chart.Description">
     </label>
 
   </mat-expansion-panel>

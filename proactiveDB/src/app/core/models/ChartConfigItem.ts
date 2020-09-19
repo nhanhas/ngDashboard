@@ -2,19 +2,19 @@ import { GridsterItem } from 'angular-gridster2';
 
 export class ChartConfigItem {
 
-  chartConfigId: number = 0;
-  name: string = '';
-  description: string = '';
-  chartSetId: number  = 0;
-  chartType: string = '';
-  backgroundColor: string = '';
-  color: string = '';
-  posX: number  = 0;
-  posY: number  = 0;
-  width: number  = 0;
-  heigth: number  = 0;
-  fields = [];
-  settings = [];
+  ChartConfigId: number = 0;
+  Name: string = '';
+  Description: string = '';
+  ChartSetId: number  = 0;
+  ChartType: string = '';
+  BackGroundColor: string = '';
+  Color: string = '';
+  PosX: number  = 0;
+  PosY: number  = 0;
+  Width: number  = 0;
+  Heigth: number  = 0;
+  Fields = [];
+  Settings = [];
   XAxisMetadataEntry: number  = 0;
   RMetadataEntry: number  = 0;
 

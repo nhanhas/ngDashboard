@@ -38,7 +38,7 @@ export class ChartComponent implements OnInit {
   }
 
   private setupChart(result) {
-    switch (this.chart.chartType) {
+    switch (this.chart.ChartType) {
       case 'line':
         this.lineSetup(result);
         break;

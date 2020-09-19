@@ -70,21 +70,21 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   }
 
   onDrag(event, identifier) {
-		event.dataTransfer.setData('chartType', identifier);
+		event.dataTransfer.setData('ChartType', identifier);
   }
 
   // change chart type on the fly (only edit mode)
   changeChartType(type: any) {
-    this.chart.chartType = type.chartType;
+    this.chart.ChartType = type.chartType;
   }
 
   // check if it is disable or is compatible with other
   isChartWidgetDisabled(type: any): boolean {
     if(!this.chart) { return false; }
 
-    const activeTypeCompatibility = this.chartTypes.find(value => value.chartType === this.chart.chartType).sameAs;
+    const activeTypeCompatibility = this.chartTypes.find(value => value.chartType === this.chart.ChartType).sameAs;
 
-    return type.chartType !== this.chart.chartType 
+    return type.chartType !== this.chart.ChartType 
     ? !activeTypeCompatibility.find((value: string) => value === type.chartType)
     : false   
   }

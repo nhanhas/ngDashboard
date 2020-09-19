@@ -10,6 +10,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AuthService } from './auth/auth.service';
 import { SystemService } from './core/system.service';
+import { HttpClientModule } from '@angular/common/http';
 
 // start app system
 export function start(systemService: SystemService, authService: AuthService) {
@@ -24,6 +25,7 @@ export function start(systemService: SystemService, authService: AuthService) {
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     SharedModule,
     AuthModule,
     DashboardModule,    
