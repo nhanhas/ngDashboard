@@ -78,16 +78,19 @@
 
 <!-- chart editing -->
 <ng-template #editingChartConfig>
-  <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header class="main-color">
-      Configurations
-    </mat-expansion-panel-header>
+  <div fxLayout="column">
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header class="main-color">
+        Configurations
+      </mat-expansion-panel-header>    
+    
+      <label>
+        Name:
+        <input [(ngModel)]="chart.Name">
+      </label>
 
-    <label>
-      Name:
-      <input [(ngModel)]="chart.Name">
-    </label>
+    </mat-expansion-panel>
 
-  </mat-expansion-panel>
-  
+    <button class="custom-button main-background-color white-color" (click)="saveChart$.next()">Save</button>
+  </div>
 </ng-template>

@@ -266,9 +266,30 @@ export class DashboardComponent implements OnInit {
     const newChart: ChartConfigItem = Object.assign(new ChartConfigItem(), {
       ChartConfigId: unsavedChartId - 1,
       ChartType: chartType,
+      ChartSetId: this.dashboards[this.activeDashboard].Id,
       Name: 'new',
       PosX: emptyCellItem.x, PosY: emptyCellItem.y,
-      Width: 6, Heigth: 4
+      Width: 6, Heigth: 4,
+      // DEV
+      Fields: [
+        {
+          name: 'ConfiguredWorkers',
+          metaDataEntryId: 1948,
+          description: null,
+          Id: 30023,
+          function: 0,
+          order: 0
+        },
+        {
+          name: 'TotalScheduler',
+          metaDataEntryId: 1949,
+          description: null,
+          Id: 30024,
+          function: 0,
+          order: 0
+        }
+      ],
+      XAxisMetadataEntry: 1932
     })
 
     this.dashboards[this.activeDashboard].charts.push(newChart);

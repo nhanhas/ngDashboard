@@ -43,10 +43,16 @@ export class DashboardService {
   }
 
   // charts
+  createChart(chart: ChartConfigItem): Observable<any> {
+    const url: string = '/ChartConfig/Create';
+
+    return this.apiService.POST(url, chart);        
+  }
+
   updateChart(chart: ChartConfigItem): Observable<any> {
     const url: string = '/ChartConfig/Update';
 
-    return this.apiService.POST(url, {chartConfig: chart});        
+    return this.apiService.POST(url, chart);        
   }
 
 }

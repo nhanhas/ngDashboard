@@ -55,6 +55,17 @@ a{
   padding: 0 16px;
 }
 
+.custom-button {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border: none;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
 /* Material overrides */
 mat-expansion-panel {
   box-shadow: none !important;

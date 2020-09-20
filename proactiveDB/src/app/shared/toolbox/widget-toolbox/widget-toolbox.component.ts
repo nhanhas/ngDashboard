@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
@@ -21,6 +21,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   // chart to edit
   chart: ChartConfigItem;
+  saveChart$ = new Subject<void>();
 
   // visual item to edit
   visual: any;
@@ -52,6 +53,21 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       )
       .subscribe((value: ChartConfigItem) => this.chart = value);
 
+
+    // save chart
+    this.saveChart$
+      .pipe(
+        switchMap(_ => this.saveChart())
+      )
+      .subscribe(value => {
+        // case of creation
+        if(typeof value === 'number'){ 
+          this.chart.ChartConfigId = value;
+        }
+        
+        console.log('chart saved', value)
+      });
+    
   }
 
   ngOnDestroy() {
@@ -71,6 +87,13 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   onDrag(event, widgetConfig) {
     event.dataTransfer.setData('widgetConfig', JSON.stringify(widgetConfig));
+  }
+
+  // charts
+  private saveChart(): Observable<any> {
+    return this.chart.ChartConfigId < 0 
+      ? this.dashboardService.createChart(this.chart)
+      : this.dashboardService.updateChart(this.chart);
   }
 
   // change chart type on the fly (only edit mode)
