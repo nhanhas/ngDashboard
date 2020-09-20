@@ -12,17 +12,17 @@ export class ApiService {
   constructor(
     private http: HttpClient) { }
 
-  // load available dashboards
-  loadDashboards(): Observable<any> {
-    const url: string = this.apiEndpoint + '/ChartSet/GetDashBoards';
 
-    return this.http.get(url);
-  }
+    GET(endpoint: string): Observable<any> {
+      const url = this.apiEndpoint + endpoint;
 
-  loadChartByDashboard(id: number): Observable<any>{
-    const url: string = this.apiEndpoint + `/chartConfig/GetDashBoardItens?DashBoardId=${id}`;
+      return this.http.get(url);
+    }
 
-    return this.http.get(url);
-  }
+    POST(endpoint: string, params: any = {}) {
+      const url = this.apiEndpoint + endpoint;
+
+      return this.http.post(url, params);
+    }
 
 }

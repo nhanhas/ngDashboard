@@ -50,7 +50,7 @@
           'disabled-background-color disabled': isChartWidgetDisabled(type)
         }"
         [draggable]="draggable" 
-        (dragstart)="draggable ? onDrag($event, type.chartType) : null"
+        (dragstart)="draggable ? onDrag($event, { collection: 'charts', type: type.chartType }) : null"
         (click)="!draggable ? changeChartType(type) : null">
 
         <i *ngSwitchCase="'line'" class="icon-lg ri-line-chart-line"></i>
@@ -85,7 +85,7 @@
 
     <label>
       Name:
-      <input [(ngModel)]="chart.Description">
+      <input [(ngModel)]="chart.Name">
     </label>
 
   </mat-expansion-panel>

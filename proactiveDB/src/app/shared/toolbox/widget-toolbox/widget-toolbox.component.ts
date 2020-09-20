@@ -69,8 +69,8 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     this.chart = undefined;
   }
 
-  onDrag(event, identifier) {
-		event.dataTransfer.setData('ChartType', identifier);
+  onDrag(event, widgetConfig) {
+    event.dataTransfer.setData('widgetConfig', JSON.stringify(widgetConfig));
   }
 
   // change chart type on the fly (only edit mode)

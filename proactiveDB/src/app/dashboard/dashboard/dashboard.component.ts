@@ -62,7 +62,6 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private apiService: ApiService,
     private dashboardService: DashboardService) { }
 
   ngOnInit() {
@@ -103,7 +102,7 @@ export class DashboardComponent implements OnInit {
       .subscribe((value: DashboardItem[]) => {
         // update charts dashboard due to grister config
         this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-          chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth }
+          chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth, collection: 'charts', id: chart.ChartConfigId }
           }) 
         )
 
@@ -116,7 +115,7 @@ export class DashboardComponent implements OnInit {
   
   // load dashboards from server
   private loadDashboards(): Observable<DashboardItem[]> {
-    return this.apiService.loadDashboards()
+    return this.dashboardService.loadDashboards()
       .pipe(
         // parse to known model
         map((value: any[]) => value.map(item =>  Object.assign(new DashboardItem(), item)))
@@ -125,7 +124,7 @@ export class DashboardComponent implements OnInit {
 
   // load chart by dashboard id
   private loadChartsByDashboard(id: number): Observable<ChartConfigItem[]>{
-    return this.apiService.loadChartByDashboard(id)
+    return this.dashboardService.loadChartByDashboard(id)
       .pipe(
          // parse to known model
          map((value: any[]) => value.map(item =>  Object.assign(new ChartConfigItem(), item)))        
@@ -174,20 +173,36 @@ export class DashboardComponent implements OnInit {
     ];
 
     this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-      chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth }
+      chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth, collection: 'charts', id: chart.ChartConfigId }
       }) 
     )
 
   }
 
-
+  // on change widget
   itemChange(item, itemComponent) {
-    //console.info('itemChanged', item, itemComponent);
-    const itemChanged = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === +itemComponent.el.id);
-    console.log(itemChanged);
-    // TODO check types for rest of element types
-    this.updateChartConfigs();
+    // collection: 'charts', snapshots, visuals from dashboard
+    const { collection, id } = item;
 
+    // pick right id field of widget
+    let idField;
+    if(collection === 'charts') { idField = 'ChartConfigId' };
+    if(collection === 'snapshots') { idField = 'SnapshotConfigId' };
+    
+    // refresh model positions before update on server
+    this.refreshPositionFields();
+
+    // get item changed
+    const itemChanged = this.dashboards[this.activeDashboard][collection].find(value => value[idField] === +id);
+    
+    // chart update
+    if(itemChanged instanceof ChartConfigItem) { this.updateChart(itemChanged) }
+    
+    // snapshot update - TODO
+
+    // visual update - TODO
+
+    console.log('changed widget dimensions', itemChanged);
   }
 
   itemResize(item, itemComponent) {
@@ -233,6 +248,41 @@ export class DashboardComponent implements OnInit {
     
   }
   
+  // update chart config on server
+  private updateChart(chart: ChartConfigItem) {
+    // ingore unsaved charts
+    if(chart.ChartConfigId < 0) { return; }
+
+    // update chart
+    this.dashboardService.updateChart(chart)
+      .subscribe(value => {
+        console.log(value)
+      })
+  }
+
+  // specific drop chart handler
+  private onDropChart(chartType: string, emptyCellItem: GridsterItem) {
+    const unsavedChartId = this.dashboards[this.activeDashboard].charts.reduce((min, chart) => chart.ChartConfigId < min ? chart.ChartConfigId : min, 0)
+    const newChart: ChartConfigItem = Object.assign(new ChartConfigItem(), {
+      ChartConfigId: unsavedChartId - 1,
+      ChartType: chartType,
+      Name: 'new',
+      PosX: emptyCellItem.x, PosY: emptyCellItem.y,
+      Width: 6, Heigth: 4
+    })
+
+    this.dashboards[this.activeDashboard].charts.push(newChart);
+
+    // edit new chart in toolbox 
+    this.editChart(newChart);
+
+    // update grister-item with chartConfig positioning/size
+    this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
+      chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth, collection: 'charts', id: chart.ChartConfigId }
+      }) 
+    );
+  }
+
   // get id of chart in edition
   get editingChartId(): number {
     if(!this.dashboardService.chart$.value) { return 0 }
@@ -241,44 +291,40 @@ export class DashboardComponent implements OnInit {
     return ChartConfigId || 0;
   }
 
-  // update chartConfig with grid positioning/size
-  private updateChartConfigs() {
+  // refresh widgets ConfigItems with grid positioning/size
+  private refreshPositionFields() {
+    // charts
     this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
       chart.PosX = chart.gridConfig.x;
       chart.PosY = chart.gridConfig.y;
       chart.Width = chart.gridConfig.cols;
       chart.Heigth = chart.gridConfig.rows;
     }));
+
+    // snapshots - TODO
+
+    // visuals - TODO
+  }
+
+
+  // get the selected dasbhoard
+  get activeDashboard(): number {
+    return this.tabs.selectedIndex;
   }
 
   // on drop a new item into dashboard
   onDrop(ev, emptyCellItem: GridsterItem) {    
     if(!this.dashboards){ return }
-    // TODO check for all types of elements
-    const chartType = ev.dataTransfer.getData("chartType");
-    const newChart: ChartConfigItem = Object.assign(new ChartConfigItem(), {
-      ChartConfigId: 3,
-      ChartType: chartType,
-      Description: 'new',
-      PosX: emptyCellItem.x, PosY: emptyCellItem.y,
-      Width: 5, Heigth: 5
-    })
-		this.dashboards[this.activeDashboard].charts.push(newChart);
 
-    // edit new chart in toolbox 
-    this.editChart(newChart);
+    const { collection, type } = JSON.parse(ev.dataTransfer.getData("widgetConfig"));
+    
+    // drop chart
+    if(collection === 'charts'){ return this.onDropChart(type, emptyCellItem) }
 
-    // update grister-item with chartConfig positioning/size
-    return this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-      chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth }
-      }) 
-    );
+    // drop snapshot - TODO
 
-	}
+    // drop visual - TODO
 
-  // get the selected dasbhoard
-  get activeDashboard(): number {
-    return this.tabs.selectedIndex;
   }
 
 } 
