@@ -55,4 +55,15 @@ export class DashboardService {
     return this.apiService.POST(url, chart);        
   }
 
+  loadChartResults(id: number, startDate: Date, endDate: Date): Observable<any>{
+    const url: string = '/DataEntries/GetDataEntriesByObjectId';
+
+    return this.apiService.POST(url, {
+      ChartId: id,
+      StartingDate: startDate,
+      EndingDate: endDate        
+    });        
+    
+  }
+
 }

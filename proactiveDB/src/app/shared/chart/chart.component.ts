@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
+import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-chart',
@@ -31,23 +32,31 @@ export class ChartComponent implements OnInit {
   chartLegend = true;
   chartPlugins = [];
 
-  constructor() { }
+  constructor(
+    private dashboardService: DashboardService) { }
 
   ngOnInit() {
     // load from server
+    const endDate = new Date();
+    const startDate = new Date() 
+    startDate.setMonth(endDate.getMonth() - 6);
+
+    this.dashboardService.loadChartResults(this.chart.ChartConfigId, startDate, endDate)
+      .subscribe(value => {
+        // setup chart results
+        this.setupChart(value);
+      })
   }
 
   private setupChart(result) {
     switch (this.chart.ChartType) {
       case 'line':
-        this.lineSetup(result);
-        break;
-
       case 'bar':
         this.barSetup(result);
         break;
 
       case 'pie':
+      case 'polar':
         this.pieSetup(result);
         break;  
 
@@ -63,11 +72,13 @@ export class ChartComponent implements OnInit {
   }
 
   private barSetup(result) {
-
+    this.chartLabels = result.labels;
+    this.chartData = result.datasets;
   }
 
   private pieSetup(result) {
-
+    this.chartLabels = result.labels;
+    this.chartData = result.datasets;
   }
 
 
