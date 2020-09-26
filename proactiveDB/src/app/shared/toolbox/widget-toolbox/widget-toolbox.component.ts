@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
+import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
+import { SystemService } from 'src/app/core/system.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 export interface ChartTypes {
@@ -26,10 +28,15 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   // visual item to edit
   visual: any;
 
+  // datasources to use on widgets
+  availableDatasources: DataSourceItem[] = this.systemService.dataSources$.value;
+  fieldsInUse: number[] = [];
+
   // unsubscribe
   destroy$ = new Subject<boolean>();
 
   constructor(
+    private systemService: SystemService,
     private dashboardService: DashboardService) { }
 
   ngOnInit() {
@@ -49,9 +56,14 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
 
+        filter(value => !!value),
+        
         tap(_ => this.reset())
       )
-      .subscribe((value: ChartConfigItem) => this.chart = value);
+      .subscribe((value: ChartConfigItem) => { 
+        this.chart = value
+        this.updateDatasourceFields(this.chart.Fields);
+      });
 
 
     // save chart
@@ -83,6 +95,22 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   private reset() {
     this.visual = undefined;
     this.chart = undefined;
+
+    this.fieldsInUse = [];
+  }
+
+  // update fieldsInUse collection
+  updateDatasourceFields(widgetFields: any[]) {
+    // which tables are in use
+    this.availableDatasources.forEach(db => {
+      db.itens.forEach(table => {
+        table.itens.forEach(field => {
+            if(widgetFields.find(item => item.metaDataEntryId === field.MetadataEntryId)){
+              this.fieldsInUse.push(field.MetadataEntryId);
+            }
+          })        
+      })        
+    })
   }
 
   onDrag(event, widgetConfig) {

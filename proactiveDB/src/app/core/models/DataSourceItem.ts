@@ -1,11 +1,11 @@
 export class DataSourceItem {
 
-  MetadataEntryId: string;
+  MetadataEntryId: number;
   description: string = '';
   itens: DataSourceItem[] = [];
   name: string = '';
   selected: boolean;
   serviceId: number;
-  type: string;
+  type: number;
   
 }

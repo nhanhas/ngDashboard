@@ -89,6 +89,11 @@
         <input [(ngModel)]="chart.Name">
       </label>
 
+      <app-datasource-tree 
+        [datasourceItems]="availableDatasources"
+        [showFields]="true"
+        [(selectedFields)]="fieldsInUse"></app-datasource-tree> 
+
     </mat-expansion-panel>
 
     <button class="custom-button main-background-color white-color" (click)="saveChart$.next()">Save</button>

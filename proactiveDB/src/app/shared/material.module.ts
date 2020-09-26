@@ -7,10 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-
-
-
-
+import {MatTreeModule} from '@angular/material/tree';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [],
@@ -22,7 +20,9 @@ import { MatButtonModule } from '@angular/material/button';
     MatToolbarModule,
     MatExpansionModule,
     MatMenuModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTreeModule,
+    MatCheckboxModule
   ],
   exports: [
     MatTabsModule,
@@ -31,7 +31,9 @@ import { MatButtonModule } from '@angular/material/button';
     MatToolbarModule,
     MatExpansionModule,
     MatMenuModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTreeModule,
+    MatCheckboxModule
   ]
 })
 export class MaterialModule { }

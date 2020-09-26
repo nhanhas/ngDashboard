@@ -4,6 +4,11 @@
 </div>
 
 <div class="toolbox-body">
+   <app-datasource-tree 
+    [datasourceItems]="availableDatasources"
+    [showFields]="true"
+    [(selectedFields)]="fieldsInUse"></app-datasource-tree> 
 
-  Under construction
+<button (click)="save()">save</button>
+
 </div>

@@ -18,13 +18,17 @@ import { AdsenseComponent } from './adsense/adsense.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserInfoComponent } from './user-info/user-info.component';
 import { WidgetToolboxComponent } from './toolbox/widget-toolbox/widget-toolbox.component';
+import { DatasourceTreeComponent } from './datasource-tree/datasource-tree.component';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent],
+  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent, DatasourceTreeComponent],
   imports: [
     CommonModule,
     MaterialModule,
@@ -33,7 +37,10 @@ import { WidgetToolboxComponent } from './toolbox/widget-toolbox/widget-toolbox.
     GridsterModule,
     ChartsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatTreeModule,
+    MatIconModule,
+    MatButtonModule
   ],
   exports: [
     MaterialModule,
