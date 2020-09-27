@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
@@ -32,20 +34,46 @@ export class ChartComponent implements OnInit {
   chartLegend = true;
   chartPlugins = [];
 
+  // unsubscribe
+  destroy$ = new Subject<boolean>();
+
   constructor(
     private dashboardService: DashboardService) { }
 
   ngOnInit() {
+ 
+    this.dashboardService.reloadData$
+      .pipe(
+        takeUntil(this.destroy$),
+        
+        filter((value: number) => this.chart.ChartConfigId === value)
+      )      
+      .subscribe(_ => this.loadChartResults())
+
+    // load results
+    this.loadChartResults();
+  }
+
+  private loadChartResults() {
     // load from server
     const endDate = new Date();
     const startDate = new Date() 
     startDate.setMonth(endDate.getMonth() - 6);
-
+    
     this.dashboardService.loadChartResults(this.chart.ChartConfigId, startDate, endDate)
-      .subscribe(value => {
-        // setup chart results
-        this.setupChart(value);
-      })
+    .subscribe(value => {
+      // setup chart results
+      this.setupChart(value);
+    })
+  }
+
+  ngOnDestroy() {
+    // unsubscribe
+    this.destroy$.next(true);
+    this.destroy$.complete();
+
+    // clear widget in edition
+    this.dashboardService.clearWidgetsEdition();
   }
 
   private setupChart(result) {
@@ -62,7 +90,7 @@ export class ChartComponent implements OnInit {
 
       default:
         // never hit this!
-        this.lineSetup(result);
+        this.barSetup(result);
         break;  
     }
   }

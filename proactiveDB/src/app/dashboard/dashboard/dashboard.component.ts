@@ -242,9 +242,15 @@ export class DashboardComponent implements OnInit {
 
   deleteChart(chart: ChartConfigItem) {
     event.stopImmediatePropagation();
-
     const itemDeleted = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === chart.ChartConfigId);
-    this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
+
+    this.dashboardService.deleteChart(itemDeleted)
+      .subscribe(value => {
+        console.log('removed chart', value)
+        this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
+      })
+    
+    
     
   }
   
@@ -269,27 +275,7 @@ export class DashboardComponent implements OnInit {
       ChartSetId: this.dashboards[this.activeDashboard].Id,
       Name: 'new',
       PosX: emptyCellItem.x, PosY: emptyCellItem.y,
-      Width: 6, Heigth: 4,
-      // DEV
-      Fields: [
-        {
-          name: 'ConfiguredWorkers',
-          metaDataEntryId: 1948,
-          description: null,
-          Id: 30023,
-          function: 0,
-          order: 0
-        },
-        {
-          name: 'TotalScheduler',
-          metaDataEntryId: 1949,
-          description: null,
-          Id: 30024,
-          function: 0,
-          order: 0
-        }
-      ],
-      XAxisMetadataEntry: 1932
+      Width: 6, Heigth: 4      
     })
 
     this.dashboards[this.activeDashboard].charts.push(newChart);

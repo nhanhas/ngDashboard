@@ -117,7 +117,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   // update chart config fields collection
   updateChartFieldsInUse() {
     // x axis
-    this.availableYDatasources.forEach(db => {
+    this.availableXDatasources.forEach(db => {
       db.itens.forEach(table => {
         const fieldsSelected: DataSourceItem [] = table.itens.filter(field => field.selected)
         // should be only 1
@@ -135,8 +135,11 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
         const fieldsSelected: DataSourceItem [] = table.itens.filter(field => field.selected)
         fieldsInUse = fieldsInUse.concat(fieldsSelected.map(field => (
           {
+            name: field.name,
+            description: field.description,
             metaDataEntryId: field.MetadataEntryId,
-            serviceId: field.serviceId            
+            serviceId: field.serviceId,
+            function: 0 
           })
         ))
       })        
@@ -155,6 +158,10 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     
     return this.chart.ChartConfigId < 0 
       ? this.dashboardService.createChart(this.chart)
+        .pipe(
+          tap((value: number) => this.chart.ChartConfigId = value),
+          tap(_ => this.dashboardService.reloadData$.next(this.chart.ChartConfigId))
+        )
       : this.dashboardService.updateChart(this.chart);
   }
 

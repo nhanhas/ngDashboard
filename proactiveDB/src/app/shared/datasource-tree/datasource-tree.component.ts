@@ -16,6 +16,7 @@ import { DashboardItem } from 'src/app/core/models/DashboardItem';
 export class DatasourceTreeComponent implements OnInit, OnChanges, OnDestroy {
   @Input() datasourceItems: DataSourceItem[];
   @Input() showFields: boolean;
+  @Input() multiple: boolean;
 
   @Output() datasourceItemsChange = new EventEmitter<DataSourceItem[]>();
   

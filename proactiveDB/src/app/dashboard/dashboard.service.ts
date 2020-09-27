@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 import { ApiService } from '../core/api.service';
 import { ChartConfigItem } from '../core/models/ChartConfigItem';
 import { DashboardItem } from '../core/models/DashboardItem';
@@ -13,6 +14,8 @@ export class DashboardService {
   chart$ = new BehaviorSubject<ChartConfigItem>(null);
   snapshot$ = new BehaviorSubject<any>(null); // TODO - class snapshotconfig
   visual$ = new BehaviorSubject<any>(null); // TODO - class visualconfig
+
+  reloadData$ = new Subject<number>();
 
   dashboardTab$ = new BehaviorSubject<DashboardItem>(null);
 
@@ -46,13 +49,27 @@ export class DashboardService {
   createChart(chart: ChartConfigItem): Observable<any> {
     const url: string = '/ChartConfig/Create';
 
-    return this.apiService.POST(url, chart);        
+    return this.apiService.POST(url, chart)
+      .pipe(
+        filter((value: number) => !!value && value > 0)
+      );        
   }
 
   updateChart(chart: ChartConfigItem): Observable<any> {
     const url: string = '/ChartConfig/Update';
 
-    return this.apiService.POST(url, chart);        
+    return this.apiService.POST(url, chart)
+      .pipe(
+        filter((value: boolean) => value),
+
+        tap(_ => this.reloadData$.next(chart.ChartConfigId))
+      );                
+  }
+
+  deleteChart(chart: ChartConfigItem): Observable<any> {
+    const url: string = `/ChartConfig/Delete?chartConfigId=${chart.ChartConfigId}`;
+
+    return this.apiService.POST(url)                 
   }
 
   loadChartResults(id: number, startDate: Date, endDate: Date): Observable<any>{
