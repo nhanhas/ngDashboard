@@ -9,6 +9,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+
+
+
 
 @NgModule({
   declarations: [],
@@ -22,7 +27,9 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatMenuModule,
     MatButtonModule,
     MatTreeModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   exports: [
     MatTabsModule,
@@ -33,7 +40,9 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatMenuModule,
     MatButtonModule,
     MatTreeModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule
   ]
 })
 export class MaterialModule { }

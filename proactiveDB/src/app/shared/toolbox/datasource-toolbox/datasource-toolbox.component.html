@@ -5,9 +5,8 @@
 
 <div class="toolbox-body">
    <app-datasource-tree 
-    [datasourceItems]="availableDatasources"
-    [showFields]="true"
-    [(selectedFields)]="fieldsInUse"></app-datasource-tree> 
+    [datasourceItems]="availableDatasources">
+  </app-datasource-tree> 
 
 <button (click)="save()">save</button>
 

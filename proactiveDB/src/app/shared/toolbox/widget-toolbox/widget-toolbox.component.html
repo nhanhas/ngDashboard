@@ -84,15 +84,25 @@
         Configurations
       </mat-expansion-panel-header>    
     
-      <label>
-        Name:
-        <input [(ngModel)]="chart.Name">
-      </label>
+      <div style="margin: 0px 0 24px">
+        <label >
+          Name:
+          <input [(ngModel)]="chart.Name">
+        </label>
+      </div>
 
-      <app-datasource-tree 
-        [datasourceItems]="availableDatasources"
-        [showFields]="true"
-        [(selectedFields)]="fieldsInUse"></app-datasource-tree> 
+      <div fxLayout="column" fxLayoutGap="8px">
+        <label>X Axis</label>
+        <app-datasource-tree 
+          [(datasourceItems)]="availableXDatasources"
+          [showFields]="true"></app-datasource-tree> 
+
+
+        <label>Y Axis</label>
+        <app-datasource-tree 
+          [(datasourceItems)]="availableYDatasources"
+          [showFields]="true"></app-datasource-tree> 
+      </div>
 
     </mat-expansion-panel>
 

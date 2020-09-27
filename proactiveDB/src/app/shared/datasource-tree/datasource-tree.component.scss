@@ -2,3 +2,26 @@
   color: #757575;
   margin-right: 5px;
 }
+
+.tree-padding {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+  gap: 8px;  
+}
+.filter-container{
+  border-radius: 4px;
+  padding: 0 16px;
+
+  mat-form-field{
+    bottom: 13px;
+    height: 40px;
+    ::ng-deep .mat-form-field-underline{
+      display: none;
+    }
+  }
+}
+
+.mat-expansion-panel-header {
+  height: 40px !important;
+}

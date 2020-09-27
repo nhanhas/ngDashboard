@@ -26,14 +26,6 @@ export class DatasourceToolboxComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe((value: DataSourceItem[]) => {
-        /*// dont use fields
-        this.availableDatasources = value
-          .map(value => ({ 
-            ...value, 
-            itens: value.itens.map(itens => ({...itens, itens: []}) as DataSourceItem)
-            } as DataSourceItem)
-          ); */
-
         this.availableDatasources = value;
 
         // which tables are in use

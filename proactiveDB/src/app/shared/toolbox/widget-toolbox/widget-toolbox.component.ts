@@ -29,8 +29,8 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   visual: any;
 
   // datasources to use on widgets
-  availableDatasources: DataSourceItem[] = this.systemService.dataSources$.value;
-  fieldsInUse: number[] = [];
+  availableXDatasources: DataSourceItem[] = [];  
+  availableYDatasources: DataSourceItem[] = [];  
 
   // unsubscribe
   destroy$ = new Subject<boolean>();
@@ -62,7 +62,8 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       )
       .subscribe((value: ChartConfigItem) => { 
         this.chart = value
-        this.updateDatasourceFields(this.chart.Fields);
+        this.updateDatasourceFields(this.availableYDatasources, this.chart.Fields);
+        this.updateDatasourceFields(this.availableXDatasources, [ {metaDataEntryId: this.chart.XAxisMetadataEntry} ]);
       });
 
 
@@ -96,21 +97,52 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     this.visual = undefined;
     this.chart = undefined;
 
-    this.fieldsInUse = [];
+    this.availableYDatasources = this.systemService.dataSourcesInUse    
+    this.availableXDatasources = this.systemService.dataSourcesInUse    
   }
 
-  // update fieldsInUse collection
-  updateDatasourceFields(widgetFields: any[]) {
+  // update datasource fields collection for tree
+  updateDatasourceFields(axisDatasource: DataSourceItem[], widgetFields: any[]) {
     // which tables are in use
-    this.availableDatasources.forEach(db => {
+    axisDatasource.forEach(db => {
       db.itens.forEach(table => {
-        table.itens.forEach(field => {
-            if(widgetFields.find(item => item.metaDataEntryId === field.MetadataEntryId)){
-              this.fieldsInUse.push(field.MetadataEntryId);
-            }
+        table.itens.forEach(field => {     
+          // select if in use or unselect otherwise
+          field.selected = !!widgetFields.find(item => item.metaDataEntryId === field.MetadataEntryId);        
           })        
       })        
     })
+  }
+
+  // update chart config fields collection
+  updateChartFieldsInUse() {
+    // x axis
+    this.availableYDatasources.forEach(db => {
+      db.itens.forEach(table => {
+        const fieldsSelected: DataSourceItem [] = table.itens.filter(field => field.selected)
+        // should be only 1
+        if(!!fieldsSelected.length){
+          this.chart.XAxisMetadataEntry = fieldsSelected[0].MetadataEntryId;           
+          return;
+        }
+      })        
+    });
+
+    // y axis
+    let fieldsInUse = [];
+    this.availableYDatasources.forEach(db => {
+      db.itens.forEach(table => {
+        const fieldsSelected: DataSourceItem [] = table.itens.filter(field => field.selected)
+        fieldsInUse = fieldsInUse.concat(fieldsSelected.map(field => (
+          {
+            metaDataEntryId: field.MetadataEntryId,
+            serviceId: field.serviceId            
+          })
+        ))
+      })        
+    })
+
+    this.chart.Fields = fieldsInUse;
   }
 
   onDrag(event, widgetConfig) {
@@ -119,6 +151,8 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   // charts
   private saveChart(): Observable<any> {
+    this.updateChartFieldsInUse();
+    
     return this.chart.ChartConfigId < 0 
       ? this.dashboardService.createChart(this.chart)
       : this.dashboardService.updateChart(this.chart);
