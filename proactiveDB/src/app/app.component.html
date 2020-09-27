@@ -42,7 +42,8 @@
 
     </div>
 
-    <div #toolbox class="toolbox-container" [@openClose]="toolboxOpened ? true : false" fxFlex="noshrink">
+    <!--   [@openClose]="toolboxOpened ? true : false" not workin on safari -->
+    <div #toolbox class="toolbox-container" [style.display]="toolboxOpened ? 'block' : 'none'" fxFlex="noshrink">
       <!-- close -->
       <div class="close-btn">
         <a mat-icon-button [routerLink]="['/', { outlets: {toolbox: null} } ]">
