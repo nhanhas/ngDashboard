@@ -9,6 +9,7 @@ import { DashboardService } from '../dashboard.service';
 import { ApiService } from 'src/app/core/api.service';
 import { forkJoin, Observable, of } from 'rxjs';
 import { filter, map, mergeMap, tap } from 'rxjs/operators';
+import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
 
 export interface DashboardConfig {
   charts: []
@@ -51,6 +52,8 @@ export class DashboardComponent implements OnInit {
     fixedRowHeight: 32,
     itemChangeCallback: this.itemChange.bind(this),
     itemResizeCallback: this.itemResize.bind(this),
+    allowMultiLayer: true,
+    defaultLayerIndex: 2
   };
 
   dashboard: GridsterItem[] = [];
@@ -102,7 +105,7 @@ export class DashboardComponent implements OnInit {
       .subscribe((value: DashboardItem[]) => {
         // update charts dashboard due to grister config
         this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
-          chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth, collection: 'charts', id: chart.ChartConfigId }
+          chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth, collection: 'charts', id: chart.ChartConfigId, layerIndex: 2 }
           }) 
         )
 
@@ -188,6 +191,7 @@ export class DashboardComponent implements OnInit {
     let idField;
     if(collection === 'charts') { idField = 'ChartConfigId' };
     if(collection === 'snapshots') { idField = 'SnapshotConfigId' };
+    if(collection === 'visuals') { idField = 'VisualConfigId' };
     
     // refresh model positions before update on server
     this.refreshPositionFields();
@@ -200,7 +204,8 @@ export class DashboardComponent implements OnInit {
     
     // snapshot update - TODO
 
-    // visual update - TODO
+    // visual update
+    if(itemChanged instanceof VisualConfigItem) { this.updateVisual(itemChanged) }
 
     console.log('changed widget dimensions', itemChanged);
   }
@@ -235,6 +240,7 @@ export class DashboardComponent implements OnInit {
     event.stopImmediatePropagation();
     
     // set chart in edition
+    this.dashboardService.clearWidgetsEdition();
     this.dashboardService.chart$.next(chart);
 
     this.router.navigate(['/', { outlets: {toolbox: 'widget-toolbox'} } ])
@@ -248,6 +254,9 @@ export class DashboardComponent implements OnInit {
       .subscribe(value => {
         console.log('removed chart', value)
         this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
+        
+        // close panel
+        this.router.navigate(['/', { outlets: {toolbox: null} } ])
       })
     
     
@@ -298,6 +307,75 @@ export class DashboardComponent implements OnInit {
     return ChartConfigId || 0;
   }
 
+  /**
+   * Visuals
+   */
+  editVisual(visual: VisualConfigItem) {
+    event.stopImmediatePropagation();
+    
+    // set chart in edition
+    this.dashboardService.clearWidgetsEdition();
+    this.dashboardService.visual$.next(visual);
+
+    this.router.navigate(['/', { outlets: {toolbox: 'widget-toolbox'} } ])
+  }
+
+  deleteVisual(visual: VisualConfigItem) {
+    event.stopImmediatePropagation();
+    const itemDeleted = this.dashboards[this.activeDashboard].visuals.find((value: VisualConfigItem) => value.VisualConfigId === visual.VisualConfigId);
+    this.dashboards[this.activeDashboard].visuals.splice(this.dashboards[this.activeDashboard].visuals.indexOf(itemDeleted), 1);
+        
+    // close panel
+    this.router.navigate(['/', { outlets: {toolbox: null} } ])
+  }
+
+  // update visual config on server
+  private updateVisual(visual: VisualConfigItem) {
+  // ingore unsaved visual
+  if(visual.VisualConfigId < 0) { return; }
+
+  // update visual
+  this.dashboardService.updateVisual(visual)
+    .subscribe(value => {
+      console.log(value)
+    })
+}
+
+  // specific drop visual handler
+  private onDropVisual(visualType: number, emptyCellItem: GridsterItem) {
+    const unsavedVisualId = this.dashboards[this.activeDashboard].visuals.reduce((min, visual) => visual.VisualConfigId < min ? visual.VisualConfigId : min, 0)
+    const newVisual: VisualConfigItem = Object.assign(new VisualConfigItem(), {
+      VisualConfigId: unsavedVisualId - 1,
+      VisualType: visualType,
+      DashBoardId: this.dashboards[this.activeDashboard].Id,
+      Name: 'new',
+      PosX: emptyCellItem.x, PosY: emptyCellItem.y,
+      Width: 6, Heigth: 4,    
+      Settings: [ {key: 'layerIndex', value: visualType === 1 ? 1 : 2} ]  
+    })
+
+    this.dashboards[this.activeDashboard].visuals.push(newVisual);
+
+    // edit new visual in toolbox 
+    this.editVisual(newVisual);
+
+    // update grister-item with chartConfig positioning/size
+    this.dashboards.forEach(value => value.visuals.forEach((visual: VisualConfigItem) => {
+      const layerSetting = visual.Settings.find(setting => setting.key === 'layerIndex').value as number;
+      
+      visual.gridConfig = { x: visual.PosX, y: visual.PosY, cols: visual.Width, rows: visual.Heigth, collection: 'visuals', id: visual.VisualConfigId, layerIndex: layerSetting}
+      }) 
+    );
+  }
+
+  // get id of visual in edition
+  get editingVisualId(): number {
+    if(!this.dashboardService.visual$.value) { return 0 }
+    
+    const { VisualConfigId } = this.dashboardService.visual$.value;
+    return VisualConfigId || 0;
+  }
+
   // refresh widgets ConfigItems with grid positioning/size
   private refreshPositionFields() {
     // charts
@@ -309,8 +387,15 @@ export class DashboardComponent implements OnInit {
     }));
 
     // snapshots - TODO
+    
 
     // visuals - TODO
+    this.dashboards.forEach(value => value.visuals.forEach((visual:VisualConfigItem) => {
+      visual.PosX = visual.gridConfig.x;
+      visual.PosY = visual.gridConfig.y;
+      visual.Width = visual.gridConfig.cols;
+      visual.Heigth = visual.gridConfig.rows;
+    }));
   }
 
 
@@ -331,6 +416,7 @@ export class DashboardComponent implements OnInit {
     // drop snapshot - TODO
 
     // drop visual - TODO
+    if(collection === 'visuals'){ return this.onDropVisual(type, emptyCellItem) }
 
   }
 

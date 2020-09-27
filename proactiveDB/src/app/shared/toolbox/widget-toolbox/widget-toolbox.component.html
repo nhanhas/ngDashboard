@@ -21,17 +21,21 @@
     
 
     <!-- other elements -->
-    <mat-expansion-panel>
+    <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header class="main-color">
         Other elements
       </mat-expansion-panel-header>
   
-      This the expansion 2 content
+      <ng-container *ngFor="let visualType of visualTypes"> 
+        <ng-content *ngTemplateOutlet="visualWidget; context: {type: visualType, draggable: !isEditing}"></ng-content>
+      </ng-container>
   
     </mat-expansion-panel>
     
     <ng-container *ngIf="isEditing">
       <ng-content *ngTemplateOutlet="!!chart ? editingChartConfig : null"></ng-content>
+
+      <ng-content *ngTemplateOutlet="!!visual ? editingVisualConfig : null"></ng-content>
     </ng-container>
 
   </mat-accordion>
@@ -107,5 +111,59 @@
     </mat-expansion-panel>
 
     <button class="custom-button main-background-color white-color" (click)="saveChart$.next()">Save</button>
+  </div>
+</ng-template>
+
+
+<!-- visual widget template -->
+<ng-template #visualWidget let-type="type" let-draggable="draggable">
+  <ng-container [ngSwitch]="type.visualType">
+    <div class="widget text-color">
+      <div         
+        class="widget-icon white-color main-background-color" 
+        [class.green-background-color]="visual && type.visualType === visual.VisualType"
+        [ngClass]="{ 
+          'disabled-background-color disabled': isVisualWidgetDisabled(type)
+        }"
+        [draggable]="draggable" 
+        (dragstart)="draggable ? onDrag($event, { collection: 'visuals', type: type.visualType }) : null">
+
+        <i *ngSwitchCase="1" class="icon-lg ri-shape-line"></i>
+        <i *ngSwitchCase="2" class="icon-lg ri-h-1"></i>
+
+        <i *ngSwitchDefault class="icon-lg ri-question-line"></i>
+      </div>
+      
+      <span *ngSwitchCase="1">Rectangle</span>
+      <span *ngSwitchCase="2">Text label</span>
+
+      <span *ngSwitchDefault>Unknown</span>
+    </div>
+    
+  </ng-container>
+</ng-template>
+
+<!-- visual editing -->
+<ng-template #editingVisualConfig>
+  <div fxLayout="column">
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header class="main-color">
+        Configurations
+      </mat-expansion-panel-header>    
+    
+      <div style="margin: 0px 0 24px">
+        <label >
+          Name:
+          <input [(ngModel)]="visual.Name">
+        </label>
+      </div>
+
+      <div fxLayout="column" fxLayoutGap="8px">
+        Under construction
+      </div>
+
+    </mat-expansion-panel>
+
+    <button class="custom-button main-background-color white-color" (click)="saveVisual$.next()">Save</button>
   </div>
 </ng-template>

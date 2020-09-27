@@ -35,6 +35,23 @@
             </div>
           </gridster-item>
 
+          <!-- visual -->
+          <gridster-item [id]="visual.VisualConfigId" [item]="visual.gridConfig" [class.item-editing]="editingVisualId === visual.VisualConfigId" *ngFor="let visual of dashboard.visuals">
+            <!-- toolbar -->
+            <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
+              <!-- title and edit -->
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
+                <i class="icon-md ri-edit-line tab-icon" (click)="editVisual(visual)"></i>
+                <span>{{ visual.Name }}</span>
+              </div>
+              <!-- remove -->
+              <i class="icon-md ri-close-line tab-icon" (click)="deleteVisual(visual)"></i> 
+            </div>
+            
+            <div class="gridster-item-content">
+            </div>
+          </gridster-item>
+
         </gridster>
       </ng-template>
       

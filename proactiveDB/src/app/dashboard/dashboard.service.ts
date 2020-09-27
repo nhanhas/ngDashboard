@@ -4,6 +4,7 @@ import { filter, tap } from 'rxjs/operators';
 import { ApiService } from '../core/api.service';
 import { ChartConfigItem } from '../core/models/ChartConfigItem';
 import { DashboardItem } from '../core/models/DashboardItem';
+import { VisualConfigItem } from '../core/models/VisualConfigItem';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class DashboardService {
   // widgets in edition
   chart$ = new BehaviorSubject<ChartConfigItem>(null);
   snapshot$ = new BehaviorSubject<any>(null); // TODO - class snapshotconfig
-  visual$ = new BehaviorSubject<any>(null); // TODO - class visualconfig
+  visual$ = new BehaviorSubject<VisualConfigItem>(null); // TODO - class visualconfig
 
   reloadData$ = new Subject<number>();
 
@@ -81,6 +82,31 @@ export class DashboardService {
       EndingDate: endDate        
     });        
     
+  }
+
+  // visuals
+  createVisual(visual: VisualConfigItem): Observable<any> {
+    const url: string = '/VisualItemConfig/Create';
+
+    return this.apiService.POST(url, visual)
+      .pipe(
+        filter((value: number) => !!value && value > 0)
+      );        
+  }
+
+  updateVisual(visual: VisualConfigItem): Observable<any> {
+    const url: string = '/VisualItemConfig/Update';
+
+    return this.apiService.POST(url, visual)
+      .pipe(
+        filter((value: boolean) => value)
+      );                
+  }
+
+  deleteVisual(visual: VisualConfigItem): Observable<any> {
+    const url: string = `/VisualItemConfig/Delete?visualItemConfigId=${visual.VisualConfigId}`;
+
+    return this.apiService.POST(url)                 
   }
 
 }

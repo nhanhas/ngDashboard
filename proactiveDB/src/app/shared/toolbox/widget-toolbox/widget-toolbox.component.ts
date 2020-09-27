@@ -3,12 +3,18 @@ import { Observable, of, Subject } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
+import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
 import { SystemService } from 'src/app/core/system.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 export interface ChartTypes {
   chartType: string;
   sameAs: string[];
+}
+
+export interface VisualTypes {
+  visualType: number;
+  description: string;
 }
 
 @Component({
@@ -25,12 +31,19 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   chart: ChartConfigItem;
   saveChart$ = new Subject<void>();
 
-  // visual item to edit
-  visual: any;
-
   // datasources to use on widgets
   availableXDatasources: DataSourceItem[] = [];  
   availableYDatasources: DataSourceItem[] = [];  
+
+  // supported visual types
+  visualTypes: VisualTypes[] = [];
+
+  // visual item to edit
+  visual: VisualConfigItem;
+  saveVisual$ = new Subject<void>();
+
+  // snapshot item to edit
+  snapshot: any;
 
   // unsubscribe
   destroy$ = new Subject<boolean>();
@@ -49,23 +62,41 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       { chartType: 'radar', sameAs: []},
       { chartType: 'polar', sameAs: ['pie']},
       { chartType: 'bubble', sameAs: [] }
+    ];
+
+    this.visualTypes = [
+      { visualType: 1, description: 'container' },
+      { visualType: 2, description: 'label' },
     ]
 
     // widget in edition [chart]
     this.dashboardService.chart$
       .pipe(
         takeUntil(this.destroy$),
-
-        filter(value => !!value),
         
-        tap(_ => this.reset())
+        tap(_ => this.reset()),
+
+        filter(value => !!value)
       )
       .subscribe((value: ChartConfigItem) => { 
         this.chart = value
         this.updateDatasourceFields(this.availableYDatasources, this.chart.Fields);
         this.updateDatasourceFields(this.availableXDatasources, [ {metaDataEntryId: this.chart.XAxisMetadataEntry} ]);
       });
+    
+    // widget in edition [visual]
+    this.dashboardService.visual$
+      .pipe(
+        takeUntil(this.destroy$),
+        
+        tap(_ => this.reset()),
 
+        filter(value => !!value)
+      )
+      .subscribe((value: VisualConfigItem) => { 
+        this.visual = value
+      });
+    
 
     // save chart
     this.saveChart$
@@ -81,6 +112,21 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
         console.log('chart saved', value)
       });
     
+    // save visual
+    this.saveVisual$
+    .pipe(
+      switchMap(_ => this.saveVisual())
+    )
+    .subscribe(value => {
+      // case of creation
+      if(typeof value === 'number'){ 
+        this.visual.VisualConfigId = value;
+      }
+      
+      console.log('visual saved', value)
+    });
+    
+
   }
 
   ngOnDestroy() {
@@ -172,6 +218,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   // check if it is disable or is compatible with other
   isChartWidgetDisabled(type: any): boolean {
+    if(this.visual || this.snapshot) { return true; }
     if(!this.chart) { return false; }
 
     const activeTypeCompatibility = this.chartTypes.find(value => value.chartType === this.chart.ChartType).sameAs;
@@ -184,6 +231,26 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   // we are editing element or creating a new one
   get isEditing(): boolean {
     return !!this.chart || !!this.visual;
+  }
+
+  // visuals
+  private saveVisual(): Observable<any> {
+    
+    return this.visual.VisualConfigId < 0 
+      ? this.dashboardService.createVisual(this.visual)
+        .pipe(
+          tap((value: number) => this.visual.VisualConfigId = value)
+        )
+      : this.dashboardService.updateVisual(this.visual);
+  }
+
+  // check if it is disable or is compatible with other
+  isVisualWidgetDisabled(type: any): boolean {
+    if(this.chart || this.snapshot) { return true; }
+    if(!this.visual) { return false; }
+    
+    // there is no compatibility
+    return this.visual.VisualType !== type.visualType;
   }
 
 }
