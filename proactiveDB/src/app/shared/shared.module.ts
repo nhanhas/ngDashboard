@@ -22,13 +22,14 @@ import { DatasourceTreeComponent } from './datasource-tree/datasource-tree.compo
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { DatasetPickerComponent } from './dataset-picker/dataset-picker.component';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent, DatasourceTreeComponent],
+  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent, DatasourceTreeComponent, DatasetPickerComponent],
   imports: [
     CommonModule,
     MaterialModule,

@@ -12,7 +12,6 @@ import { SystemService } from 'src/app/core/system.service';
 export class DatasourceToolboxComponent implements OnInit, OnDestroy {
 
   availableDatasources: DataSourceItem[] = [];
-  fieldsInUse: number[] = [];
 
   // unsubscribe
   destroy$ = new Subject<boolean>();
@@ -25,28 +24,13 @@ export class DatasourceToolboxComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destroy$)
       )
-      .subscribe((value: DataSourceItem[]) => {
-        this.availableDatasources = value;
-
-        // which tables are in use
-        this.availableDatasources.forEach(db => {
-          db.itens.forEach(table => {
-            const fieldsInUse  = table.itens.filter(field => field.selected).map(value => value.MetadataEntryId)
-            this.fieldsInUse.push(...fieldsInUse);
-          })        
-        })
-      
-      })
+      .subscribe((value: DataSourceItem[]) => this.availableDatasources = value)
   }
 
   ngOnDestroy() {
     // unsubscribe
     this.destroy$.next(true);
     this.destroy$.complete();
-  }
-
-  save() {
-    console.log(this.fieldsInUse)
   }
 
 }

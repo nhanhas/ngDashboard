@@ -78,3 +78,8 @@ mat-expansion-panel-header {
   padding-left: 0px !important;
 }
 .mat-expansion-panel-body { padding: 0 !important }
+
+mat-tree-node {
+  min-height: unset !important;
+  height: 40px;
+}

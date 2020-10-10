@@ -1,25 +1,41 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
-import { SelectionModel } from '@angular/cdk/collections';
-import { from, of, Subject } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { takeUntil, debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
-import { DashboardItem } from 'src/app/core/models/DashboardItem';
+import { Subject } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { SimpleChanges } from '@angular/core';
+
+
+/**
+ * Flattened tree node that has been created from a FileNode through the flattener. Flattened
+ * nodes include level index and whether they can be expanded or not.
+ */
+export interface FlatTreeNode {
+  name: string;
+  type: number;
+  level: number;
+  expandable: boolean;
+}
 
 @Component({
   selector: 'app-datasource-tree',
   templateUrl: './datasource-tree.component.html',
   styleUrls: ['./datasource-tree.component.scss']
 })
-export class DatasourceTreeComponent implements OnInit, OnChanges, OnDestroy {
+export class DatasourceTreeComponent implements OnChanges, OnInit, OnDestroy {
   @Input() datasourceItems: DataSourceItem[];
   @Input() showFields: boolean;
-  @Input() multiple: boolean;
 
-  @Output() datasourceItemsChange = new EventEmitter<DataSourceItem[]>();
-  
+  /** The TreeControl controls the expand/collapse state of tree nodes.  */
+  treeControl: FlatTreeControl<FlatTreeNode>;
+
+  /** The TreeFlattener is used to generate the flat list of items from hierarchical data. */
+  treeFlattener: MatTreeFlattener<DataSourceItem, FlatTreeNode>;
+
+  /** The MatTreeFlatDataSource connects the control and flattener to provide data. */
+  dataSource: MatTreeFlatDataSource<DataSourceItem, FlatTreeNode>;
 
   filterTerm = new FormControl();
   filtredData: DataSourceItem[] = [];
@@ -27,17 +43,27 @@ export class DatasourceTreeComponent implements OnInit, OnChanges, OnDestroy {
   // unsubscribe
   destroy$ = new Subject<boolean>();
 
-  constructor() {
+  constructor() {    
   }
 
   ngOnChanges(changes: SimpleChanges) {
     const datasourceItems = changes['datasourceItems']?.currentValue
-    if(datasourceItems) {
+    if(datasourceItems && this.dataSource) {
       this.refresh();
     }    
   }
 
   ngOnInit() {
+    this.treeFlattener = new MatTreeFlattener(
+      this.transformer.bind(this),
+      this.getLevel,
+      this.isExpandable.bind(this),
+      this.getChildren);
+
+    this.treeControl = new FlatTreeControl(this.getLevel, this.isExpandable);
+    this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    this.dataSource.data = this.datasourceItems;
+
      // filter term
      this.filterTerm.valueChanges
      .pipe(
@@ -52,10 +78,14 @@ export class DatasourceTreeComponent implements OnInit, OnChanges, OnDestroy {
      )
      .subscribe((value: string) => {
        // update data source
-       this.filtredData = value 
+       this.dataSource.data = value 
          ? this.filterEntriesByTerm(value, this.datasourceItems) 
          : this.datasourceItems;
-        
+      
+      !!value.length 
+        ? this.treeControl.expandAll()
+        : this.treeControl.collapseAll();
+
      });
   }
 
@@ -65,10 +95,9 @@ export class DatasourceTreeComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-
   refresh() {    
     // update data source
-    this.filtredData = this.datasourceItems;   
+    this.dataSource.data = this.datasourceItems;   
     this.filterTerm.setValue('', {emitEvent: false});
   }
 
@@ -106,55 +135,36 @@ export class DatasourceTreeComponent implements OnInit, OnChanges, OnDestroy {
     return term.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
   }
 
-  dbChanged(checked: boolean, db: DataSourceItem) {
-
-    db.itens.forEach(table => {
-      table.itens.forEach(field => field.selected = checked);
-      table.selected = checked;
-    })
-
-    // emit changes
-    this.datasourceItemsChange.emit(this.datasourceItems);
+  /** Transform the data to something the tree can read. */
+  transformer(node: DataSourceItem, level: number) {
+    return {
+      name: node.name,
+      type: node.type,
+      level: level,
+      expandable: this.showFields 
+        ? node.type !== 4 
+        : node.type === 1
+    };
   }
 
-  tableChanged(checked: boolean, table: DataSourceItem) {
-    table.itens.forEach(field => field.selected = checked);
-
-    // emit changes
-    this.datasourceItemsChange.emit(this.datasourceItems);
+  /** Get the level of the node */
+  getLevel(node: FlatTreeNode) {
+    return node.level;
   }
 
-  fieldChanged(checked: boolean, field: DataSourceItem) {
-    field.selected = checked
-
-    // emit changes
-    this.datasourceItemsChange.emit(this.datasourceItems);
+  /** Get whether the node is expanded or not. */
+  isExpandable(node: FlatTreeNode) {
+    return node.expandable
   }
 
-  dbDescendantsAllSelected(db: DataSourceItem): boolean {
-    let allFieldsSelected = true;
-    db.itens.forEach(table => {
-      allFieldsSelected = allFieldsSelected && table.itens.every(field => field.selected)
-    })
-    return allFieldsSelected && !!db.itens.length;
-  }
-  dbDescendantsPartiallySelected(db: DataSourceItem): boolean {
-    let someFieldsSelected = false;
-    db.itens.forEach(table => {
-      someFieldsSelected = someFieldsSelected || table.itens.some(field => field.selected)
-    })
-
-    return someFieldsSelected && !this.dbDescendantsAllSelected(db);
+  /** Get whether the node has children or not. */
+  hasChild(index: number, node: FlatTreeNode) {
+    return node.expandable
+    
   }
 
-  tableDescendantsAllSelected(table: DataSourceItem): boolean {    
-    const allFieldsSelected = table.itens.every(field => field.selected)
-    return allFieldsSelected;
+  /** Get the children for the node. */
+  getChildren(node: DataSourceItem): DataSourceItem[] | null | undefined {
+    return node.itens;
   }
-  tableDescendantsPartiallySelected(table: DataSourceItem): boolean {    
-    const someFieldsSelected = table.itens.some(field => field.selected)
-
-    return someFieldsSelected && !this.tableDescendantsAllSelected(table);
-  }
-
 }
