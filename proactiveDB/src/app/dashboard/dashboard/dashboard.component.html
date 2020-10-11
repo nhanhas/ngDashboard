@@ -23,7 +23,7 @@
             <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- title and edit -->
               <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
-                <i class="icon-md ri-drag-move-fill drag-handler"></i>
+                <i class="icon-md ri-drag-move-fill drag-handler" (click)="$event.stopPropagation()"></i>
                 <span>{{ chart.Name }}</span>
               </div>
               <!-- remove -->
@@ -41,7 +41,7 @@
             <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- title and edit -->
               <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
-                <i class="icon-md ri-drag-move-fill drag-handler"></i>
+                <i class="icon-md ri-drag-move-fill drag-handler" (click)="$event.stopPropagation()"></i>
                 <span>{{ visual.Name }}</span>
               </div>
               <!-- remove -->
