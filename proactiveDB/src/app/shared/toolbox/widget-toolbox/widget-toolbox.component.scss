@@ -19,3 +19,10 @@
 .custom-button {
   margin-top: 40px;
 }
+
+.mat-tab-group {
+  min-height: 320px;
+  ::ng-deep .mat-tab-body {
+    padding-top: 16px;
+  }
+}

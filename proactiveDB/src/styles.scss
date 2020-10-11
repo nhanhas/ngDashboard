@@ -70,6 +70,10 @@ a{
   flex-grow: 1;
 }
 
+.custom-tooltip { 
+  white-space: pre-line;
+}
+
 /* Material overrides */
 mat-expansion-panel {
   box-shadow: none !important;

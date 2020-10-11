@@ -89,3 +89,7 @@
 .fields-list.cdk-drop-list-dragging .empty-fields-hint:not(.cdk-drag-placeholder) {
   opacity: 0;
 }
+
+.delete-btn {
+  cursor: pointer;
+}

@@ -95,13 +95,23 @@
         </label>
       </div>
 
-      <div fxLayout="column" fxLayoutGap="8px">       
-          <app-dataset-picker 
-            [datasourceItems]="availableYDatasources"
-            [(xAxisField)]="chart.XAxisMetadataEntry"
-            [yAxisFields]="chart.Fields">
-          </app-dataset-picker>
-      </div>
+      <!-- data/shaping -->
+      <mat-tab-group>
+        <mat-tab label="Data">
+          <div fxLayout="column" fxLayoutGap="8px">       
+            <app-dataset-picker 
+              [datasourceItems]="availableDatasources"
+              [(xAxisField)]="chart.XAxisMetadataEntry"
+              [yAxisFields]="chart.Fields">
+            </app-dataset-picker>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Shaping"></mat-tab>
+        
+      </mat-tab-group>
+
+      
 
     </mat-expansion-panel>
 

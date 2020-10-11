@@ -26,7 +26,7 @@
     .mat-tab-label {
       height: 40px;
     }
-    .mat-tab-label:after {
+    .mat-tab-label:not(:last-child):after {
       content: "";
       height: 16px;
       width: 1px;

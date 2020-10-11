@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
-import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
 import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
@@ -32,8 +32,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   saveChart$ = new Subject<void>();
 
   // datasources to use on widgets
-  availableXDatasources: DataSourceItem[] = [];  
-  availableYDatasources: DataSourceItem[] = [];  
+  availableDatasources: DataSourceItem[] = [];   
 
   // supported visual types
   visualTypes: VisualTypes[] = [];
@@ -68,10 +67,20 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       { visualType: 1, description: 'container' },
       { visualType: 2, description: 'label' },
     ]
+    
+    this.reset();
+    const chart = this.dashboardService.chart$.value;
+    const visual = this.dashboardService.visual$.value;
+    // use chart if exists
+    if(chart) { this.chart = chart }
+    // use visual if exists
+    if(visual) { this.visual = visual }
 
     // widget in edition [chart]
     this.dashboardService.chart$
       .pipe(
+        skip(1),
+
         takeUntil(this.destroy$),
         
         tap(_ => this.reset()),
@@ -80,13 +89,13 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       )
       .subscribe((value: ChartConfigItem) => { 
         this.chart = value
-        this.updateDatasourceFields(this.availableYDatasources, this.chart.Fields);
-        this.updateDatasourceFields(this.availableXDatasources, [ {metaDataEntryId: this.chart.XAxisMetadataEntry} ]);
       });
     
     // widget in edition [visual]
     this.dashboardService.visual$
       .pipe(
+        skip(1),
+
         takeUntil(this.destroy$),
         
         tap(_ => this.reset()),
@@ -143,55 +152,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     this.visual = undefined;
     this.chart = undefined;
 
-    this.availableYDatasources = this.systemService.dataSourcesInUse    
-    this.availableXDatasources = this.systemService.dataSourcesInUse    
-  }
-
-  // update datasource fields collection for tree
-  updateDatasourceFields(axisDatasource: DataSourceItem[], widgetFields: any[]) {
-    // which tables are in use
-    axisDatasource.forEach(db => {
-      db.itens.forEach(table => {
-        table.itens.forEach(field => {     
-          // select if in use or unselect otherwise
-          field.selected = !!widgetFields.find(item => item.metaDataEntryId === field.MetadataEntryId);        
-          })        
-      })        
-    })
-  }
-
-  // update chart config fields collection
-  updateChartFieldsInUse() {
-    // x axis
-    this.availableXDatasources.forEach(db => {
-      db.itens.forEach(table => {
-        const fieldsSelected: DataSourceItem [] = table.itens.filter(field => field.selected)
-        // should be only 1
-        if(!!fieldsSelected.length){
-          this.chart.XAxisMetadataEntry = fieldsSelected[0].MetadataEntryId;           
-          return;
-        }
-      })        
-    });
-
-    // y axis
-    let fieldsInUse = [];
-    this.availableYDatasources.forEach(db => {
-      db.itens.forEach(table => {
-        const fieldsSelected: DataSourceItem [] = table.itens.filter(field => field.selected)
-        fieldsInUse = fieldsInUse.concat(fieldsSelected.map(field => (
-          {
-            name: field.name,
-            description: field.description,
-            metaDataEntryId: field.MetadataEntryId,
-            serviceId: field.serviceId,
-            function: 0 
-          })
-        ))
-      })        
-    })
-
-    this.chart.Fields = fieldsInUse;
+    this.availableDatasources = this.systemService.dataSourcesInUse;
   }
 
   onDrag(event, widgetConfig) {

@@ -72,6 +72,11 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  // on remove x field
+  removeXField() {
+    this.xAxisField = 0;
+  }
+
   // on drop y field
   dropYField(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -96,11 +101,21 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  // on remove y field
+  removeYField(field: any) {
+    this.yAxisFields = this.yAxisFields.filter(value => value.metaDataEntryId !== field.metaDataEntryId);
+  }
+
   // util for field info
   fieldLabel(metaDataEntryId: number): string {
     return metaDataEntryId 
       ? this.fieldsMap.get(metaDataEntryId).fieldName
       : '';
+  }
+
+  fieldTooltip(metaDataEntryId): string {
+    const field = this.fieldsMap.get(metaDataEntryId);
+    return `Datasource: ${field.datasource} \n Dataset: ${field.dataset}`
   }
 
 }

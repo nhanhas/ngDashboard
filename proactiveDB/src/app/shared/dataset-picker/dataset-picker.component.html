@@ -12,8 +12,13 @@
           cdkDropList
           class="fields-list"
           (cdkDropListDropped)="dropXField($event)">
+
+          <!-- tile -->
           <ng-container *ngIf="!!xAxisField; else emptyFields">
-            <div class="field-box" *ngFor="let xField of [xAxisField]" cdkDrag>{{fieldLabel(xField)}}</div>        
+            <div class="field-box" *ngFor="let xField of [xAxisField]" cdkDrag [matTooltip]="fieldTooltip(xField)" [matTooltipClass]="'custom-tooltip'"> 
+              {{fieldLabel(xField)}}
+              <span class="delete-btn text-color" (click)="removeXField()"><i class="ri-close-circle-line"></i></span>
+            </div>        
           </ng-container>
 
         </div> 
@@ -30,7 +35,11 @@
           (cdkDropListDropped)="dropYField($event)">
 
           <ng-container *ngIf="!!yAxisFields.length; else emptyFields">
-            <div class="field-box" *ngFor="let yField of yAxisFields" cdkDrag>{{ fieldLabel(yField.metaDataEntryId)}}</div>        
+            <!-- tile -->
+            <div class="field-box" *ngFor="let yField of yAxisFields" cdkDrag [matTooltip]="fieldTooltip(yField.metaDataEntryId)" [matTooltipClass]="'custom-tooltip'">
+              {{ fieldLabel(yField.metaDataEntryId)}}
+              <span class="delete-btn text-color" (click)="removeYField(yField)"><i class="ri-close-circle-line"></i></span>
+            </div>        
           </ng-container>
         </div>      
       </div>

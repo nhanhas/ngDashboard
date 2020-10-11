@@ -12,6 +12,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatTooltipModule} from '@angular/material/tooltip';
+
 
 
 
@@ -32,7 +34,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    DragDropModule
+    DragDropModule,
+    MatTooltipModule
   ],
   exports: [
     MatTabsModule,
@@ -46,7 +49,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
-    DragDropModule
+    DragDropModule,
+    MatTooltipModule
   ]
 })
 export class MaterialModule { }
