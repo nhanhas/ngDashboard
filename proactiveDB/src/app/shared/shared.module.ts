@@ -3,17 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from './material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MenuComponent } from './menu/menu.component';
-import { MenuToolboxComponent } from './toolbox/menu-toolbox/menu-toolbox.component';
 import { TabToolboxComponent } from './toolbox/tab-toolbox/tab-toolbox.component';
 import { DatasourceToolboxComponent } from './toolbox/datasource-toolbox/datasource-toolbox.component';
 import { RouterModule } from '@angular/router';
 import { GridsterModule } from 'angular-gridster2';
-import { UserToolboxComponent } from './toolbox/user-toolbox/user-toolbox.component';
-import { AddChartToolboxComponent } from './toolbox/add-chart-toolbox/add-chart-toolbox.component';
-import { AddVisualToolboxComponent } from './toolbox/add-visual-toolbox/add-visual-toolbox.component';
 import { ChartComponent } from './chart/chart.component';
 import { ChartsModule } from 'ng2-charts';
-import { ChartToolboxComponent } from './toolbox/chart-toolbox/chart-toolbox.component';
 import { AdsenseComponent } from './adsense/adsense.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserInfoComponent } from './user-info/user-info.component';
@@ -23,13 +18,14 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DatasetPickerComponent } from './dataset-picker/dataset-picker.component';
+import { FilterToolboxComponent } from './toolbox/filter-toolbox/filter-toolbox.component';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, MenuToolboxComponent, TabToolboxComponent, DatasourceToolboxComponent, UserToolboxComponent, AddChartToolboxComponent, AddVisualToolboxComponent, ChartComponent, ChartToolboxComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent, DatasourceTreeComponent, DatasetPickerComponent],
+  declarations: [MenuComponent, TabToolboxComponent, DatasourceToolboxComponent, ChartComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent, DatasourceTreeComponent, DatasetPickerComponent, FilterToolboxComponent],
   imports: [
     CommonModule,
     MaterialModule,
