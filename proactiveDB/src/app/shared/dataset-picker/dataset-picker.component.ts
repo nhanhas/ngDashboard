@@ -14,6 +14,7 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() yAxisFields: any[] = [];
 
   @Output() xAxisFieldChange = new EventEmitter<number>();
+  @Output() yAxisFieldsChange = new EventEmitter<any[]>();
 
   // field map for better performance
   fieldsMap = new Map<number, { datasource: string, dataset: string, fieldName: string }>();
@@ -75,6 +76,8 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
   // on remove x field
   removeXField() {
     this.xAxisField = 0;
+
+    this.xAxisFieldChange.emit(0);
   }
 
   // on drop y field
@@ -97,6 +100,8 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
         name: name,
         order: 0
       })
+
+      this.yAxisFieldsChange.emit(this.yAxisFields);
       
     }
   }
@@ -104,6 +109,8 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
   // on remove y field
   removeYField(field: any) {
     this.yAxisFields = this.yAxisFields.filter(value => value.metaDataEntryId !== field.metaDataEntryId);
+
+    this.yAxisFieldsChange.emit(this.yAxisFields);
   }
 
   // util for field info

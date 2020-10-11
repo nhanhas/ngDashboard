@@ -2,7 +2,9 @@
 .flex { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: stretch; }
 mat-toolbar { flex: 0 0 auto; }
 mat-drawer-container { flex: 1 1 0; }
-.app-main-container { flex: 1 1 0; overflow: auto; }
+.app-main-container { flex: 1 1 0; overflow: auto; 
+  margin-top: 24px; // remove this when we got adsense
+}
 
 .close-btn {
   float: right;

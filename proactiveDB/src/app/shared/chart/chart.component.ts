@@ -55,6 +55,8 @@ export class ChartComponent implements OnInit {
   }
 
   private loadChartResults() {
+    if(this.chart.ChartConfigId < 0) { return }
+    
     // load from server
     const endDate = new Date();
     const startDate = new Date() 
@@ -87,6 +89,9 @@ export class ChartComponent implements OnInit {
       case 'polar':
         this.pieSetup(result);
         break;  
+      case 'radar':
+        this.radarSetup(result);
+        break;  
 
       default:
         // never hit this!
@@ -108,6 +113,44 @@ export class ChartComponent implements OnInit {
     this.chartLabels = result.labels;
     this.chartData = result.datasets;
   }
+
+  private radarSetup(result) {
+    let json = {
+      "labels": [
+        "sbsi"
+      ],
+      "datasets": [
+        {
+          "label": "created_workers_count",
+          "data": [
+            '180',
+            '114'
+          ]
+        },
+        {
+          "label": "idle_workers_count",
+          "data": [
+            '64',
+            '112'
+          ]
+        },
+        {
+          "label": "active_workers_count",
+          "data": [
+            '116',
+            '51'
+          ]
+        }
+      ]
+    }
+    
+    this.chartLabels =  ['sb9s', 'asdv', 'add'];
+    this.chartData = json['datasets'] as ChartDataSets[]; 
+
+    console.log(this.chartData)
+  }
+
+  
 
 
 
