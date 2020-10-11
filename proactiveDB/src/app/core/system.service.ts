@@ -51,15 +51,7 @@ export class SystemService {
   }
 
   get dataSourcesInUse(): DataSourceItem[] {
-    const dataSource: DataSourceItem[] = JSON.parse(JSON.stringify(this.dataSources$.value));
-    
-    return dataSource.filter(db => {
-      db.itens = db.itens.filter(table => table.itens.every(field => field.selected));
-
-      return !!db.itens.length
-
-    })
-
+    return this.dataSources$.value;
   }  
 
 }

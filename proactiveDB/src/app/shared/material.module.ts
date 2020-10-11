@@ -11,6 +11,8 @@ import {MatTreeModule} from '@angular/material/tree';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+
 
 
 
@@ -29,7 +31,8 @@ import {MatInputModule} from '@angular/material/input';
     MatTreeModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    DragDropModule
   ],
   exports: [
     MatTabsModule,
@@ -42,7 +45,8 @@ import {MatInputModule} from '@angular/material/input';
     MatTreeModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    DragDropModule
   ]
 })
 export class MaterialModule { }

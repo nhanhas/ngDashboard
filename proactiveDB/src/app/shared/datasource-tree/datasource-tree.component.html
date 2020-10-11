@@ -1,4 +1,4 @@
-<div class="datasource-tree-container">
+<div class="datasource-tree-container" *ngIf="!showFields; else default">
   <!-- filter -->
   <div class="filter-container light-background-color">
     <mat-form-field appearance="standard" fxFlex>
@@ -13,10 +13,10 @@
   </div>   
 
     
-  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding [matTreeNodePaddingIndent]="8">
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList >
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding [matTreeNodePaddingIndent]="8" cdkDrag  [cdkDragData]="node">
       <button mat-icon-button disabled></button>    
-      <i class="icon-md text-color ri-node-tree" *ngIf="(!showFields && node.type === 3) || ( showFields && node.type === 4)"></i>&nbsp;{{ node.name }}
+      <i class="icon-md text-color ri-node-tree" *ngIf="(!showFields && node.type === 3) || ( showFields && node.type === 4)"></i>&nbsp;<span style=" white-space: nowrap;      overflow: hidden;      text-overflow: ellipsis;">{{node.name}}</span>
       
     </mat-tree-node>
 
@@ -27,8 +27,50 @@
           {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
       </button>    
-      {{node.name}}
+      <span style=" white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{node.name}}</span>
+      
     </mat-tree-node>
   </mat-tree>
 
 </div>
+
+<!-- When used with all fields -->
+<ng-template #default>
+
+  <div class="datasource-tree-container fields-picker">
+    <!-- filter -->
+    <div class="filter-container light-background-color">
+      <mat-form-field appearance="standard" fxFlex>
+        <input id="filter-input" matInput placeholder="Search" [formControl]="filterTerm">
+        <i class="icon-md ri-search-line" matSuffix *ngIf="!filterTerm.value"></i>      
+        <button style="top:5px" mat-icon-button matSuffix *ngIf="filterTerm.value" (click)="filterTerm.setValue('')">
+          <div style="padding-top:5px">
+            <i class="icon-lg ri-close-fill"></i>
+          </div>
+        </button>
+      </mat-form-field>
+    </div>   
+  
+      
+    <mat-tree class="field-tree" [dataSource]="dataSource" [treeControl]="treeControl" cdkDropList >
+      <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding [matTreeNodePaddingIndent]="8" cdkDrag  [cdkDragData]="node">
+        <button mat-icon-button disabled></button>    
+        <i class="icon-md text-color ri-node-tree" *ngIf="(!showFields && node.type === 3) || ( showFields && node.type === 4)"></i>&nbsp;<span style=" white-space: nowrap;      overflow: hidden;      text-overflow: ellipsis;">{{node.name}}</span>
+        
+      </mat-tree-node>
+  
+      <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding [matTreeNodePaddingIndent]="8">
+        <button mat-icon-button matTreeNodeToggle
+                [attr.aria-label]="'toggle ' + node.name">
+          <mat-icon class="mat-icon-rtl-mirror">
+            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+          </mat-icon>
+        </button>    
+        <span style=" white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{node.name}}</span>
+        
+      </mat-tree-node>
+    </mat-tree>
+  
+  </div>
+
+</ng-template>

@@ -15,6 +15,7 @@ import { SimpleChanges } from '@angular/core';
 export interface FlatTreeNode {
   name: string;
   type: number;
+  metaDataEntryId: number;
   level: number;
   expandable: boolean;
 }
@@ -140,6 +141,7 @@ export class DatasourceTreeComponent implements OnChanges, OnInit, OnDestroy {
     return {
       name: node.name,
       type: node.type,
+      metaDataEntryId: node.MetadataEntryId,
       level: level,
       expandable: this.showFields 
         ? node.type !== 4 

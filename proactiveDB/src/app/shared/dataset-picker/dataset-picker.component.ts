@@ -1,7 +1,6 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
 
 @Component({
@@ -11,48 +10,29 @@ import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
 })
 export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() datasourceItems: DataSourceItem[];
-  @Input() showFields: boolean;
-  @Input() multiple: boolean;
+  @Input() xAxisField: any;
+  @Input() yAxisFields: any[] = [];
 
-  @Output() datasourceItemsChange = new EventEmitter<DataSourceItem[]>();
+  @Output() xAxisFieldChange = new EventEmitter<number>();
+
+  // field map for better performance
+  fieldsMap = new Map<number, { datasource: string, dataset: string, fieldName: string }>();
   
-
-  filterTerm = new FormControl();
-  filtredData: DataSourceItem[] = [];
-
   // unsubscribe
   destroy$ = new Subject<boolean>();
 
   constructor() {
   }
 
+
   ngOnChanges(changes: SimpleChanges) {
     const datasourceItems = changes['datasourceItems']?.currentValue
-    if(datasourceItems) {
+    if(datasourceItems ) {
       this.refresh();
     }    
   }
 
   ngOnInit() {
-     // filter term
-     this.filterTerm.valueChanges
-     .pipe(
-
-       takeUntil(this.destroy$),
-
-       // wait 300ms after each keystroke before considering the term
-       debounceTime(300),
-   
-       // ignore new term if same as previous term
-       distinctUntilChanged()
-     )
-     .subscribe((value: string) => {
-       // update data source
-       this.filtredData = value 
-         ? this.filterEntriesByTerm(value, this.datasourceItems) 
-         : this.datasourceItems;
-        
-     });
   }
 
   ngOnDestroy() {
@@ -61,96 +41,66 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
-
   refresh() {    
-    // update data source
-    this.filtredData = this.datasourceItems;   
-    this.filterTerm.setValue('', {emitEvent: false});
+    this.setupFieldMap();
   }
 
-  private filterEntriesByTerm(term: string, entries: DataSourceItem[]): DataSourceItem[] {
-    let filteredEntries: DataSourceItem[] = [];
-
-    entries.forEach(value => {
-      if((this.showFields && value.type !== 4) || (!this.showFields && value.type === 1) ) {
-        const filteredChildren = this.filterEntriesByTerm(term, value.itens);
-
-        // only keep folder if it still has children
-        if(filteredChildren.length) {
-          // clone folder since we're overwriting its children
-          let clone = Object.assign({}, value);
-          clone.itens = filteredChildren;
-
-          filteredEntries.push(clone);
-        }
-      }
-      else {
-        const needle = this.removeAccents(term.toLowerCase());
-        const haystack = this.removeAccents(value.name.toLowerCase());
-
-        // only keep menu entry if it contains the filter term
-        if(haystack.includes(needle)) {
-          filteredEntries.push(value);
-        }
-      }
-    });
-
-    return filteredEntries;
-  }
-
-  private removeAccents(term: string): string {
-    return term.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-  }
-
-  dbChanged(checked: boolean, db: DataSourceItem) {
-
-    db.itens.forEach(table => {
-      table.itens.forEach(field => field.selected = checked);
-      table.selected = checked;
+  // setup map indexed by field metadataEntry
+  private setupFieldMap() {    
+    this.datasourceItems.forEach(datasource => {
+      datasource.itens.forEach(dataset => {
+        dataset.itens.forEach(datafield => {          
+          this.fieldsMap.set(datafield.MetadataEntryId, { datasource: datasource.name, dataset: dataset.name, fieldName: datafield.name });
+        })
+      })
     })
-
-    // emit changes
-    this.datasourceItemsChange.emit(this.datasourceItems);
   }
 
-  tableChanged(checked: boolean, table: DataSourceItem) {
-    table.itens.forEach(field => field.selected = checked);
+  // on drop y field
+  dropXField(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.yAxisFields, event.previousIndex, event.currentIndex);
+    } else {
 
-    // emit changes
-    this.datasourceItemsChange.emit(this.datasourceItems);
+      const { metaDataEntryId, name } = event.item.data;
+      // check if field already picked
+      if(this.xAxisField === metaDataEntryId) { return; }
+
+      // otherwise replace it
+      this.xAxisField = metaDataEntryId;      
+      this.xAxisFieldChange.emit(metaDataEntryId);
+    }
   }
 
-  fieldChanged(checked: boolean, field: DataSourceItem) {
-    field.selected = checked
+  // on drop y field
+  dropYField(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.yAxisFields, event.previousIndex, event.currentIndex);
+    } else {
 
-    // emit changes
-    this.datasourceItemsChange.emit(this.datasourceItems);
+      const { metaDataEntryId, name } = event.item.data;
+      // check if field already picked
+      const alreadyIn = this.yAxisFields.find(field => field.metaDataEntryId === metaDataEntryId);
+      if(alreadyIn) { return; }
+
+      // otherwise use it
+      this.yAxisFields.push({
+        Id: 0,
+        description: null,
+        function: 0,
+        metaDataEntryId: metaDataEntryId,
+        name: name,
+        order: 0
+      })
+      
+    }
   }
 
-  dbDescendantsAllSelected(db: DataSourceItem): boolean {
-    let allFieldsSelected = true;
-    db.itens.forEach(table => {
-      allFieldsSelected = allFieldsSelected && table.itens.every(field => field.selected)
-    })
-    return allFieldsSelected && !!db.itens.length;
-  }
-  dbDescendantsPartiallySelected(db: DataSourceItem): boolean {
-    let someFieldsSelected = false;
-    db.itens.forEach(table => {
-      someFieldsSelected = someFieldsSelected || table.itens.some(field => field.selected)
-    })
-
-    return someFieldsSelected && !this.dbDescendantsAllSelected(db);
-  }
-
-  tableDescendantsAllSelected(table: DataSourceItem): boolean {    
-    const allFieldsSelected = table.itens.every(field => field.selected)
-    return allFieldsSelected;
-  }
-  tableDescendantsPartiallySelected(table: DataSourceItem): boolean {    
-    const someFieldsSelected = table.itens.some(field => field.selected)
-
-    return someFieldsSelected && !this.tableDescendantsAllSelected(table);
+  // util for field info
+  fieldLabel(metaDataEntryId: number): string {
+    return metaDataEntryId 
+      ? this.fieldsMap.get(metaDataEntryId).fieldName
+      : '';
   }
 
 }

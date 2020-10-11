@@ -200,7 +200,6 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   // charts
   private saveChart(): Observable<any> {
-    this.updateChartFieldsInUse();
     
     return this.chart.ChartConfigId < 0 
       ? this.dashboardService.createChart(this.chart)

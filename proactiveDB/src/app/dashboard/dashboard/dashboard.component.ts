@@ -32,6 +32,9 @@ export class DashboardComponent implements OnInit {
     draggable: {
       enabled: true,
       dropOverItems: true,
+      ignoreContent: true,
+      dragHandleClass: "drag-handler",
+      ignoreContentClass: "no-drag",
     },
     resizable: {
       enabled: true,

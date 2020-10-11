@@ -1,109 +1,52 @@
-<div class="datasource-tree-container">
-  <!-- filter -->
-  <div class="filter-container light-background-color">
-    <mat-form-field appearance="standard" fxFlex>
-      <input id="filter-input" matInput placeholder="Search" [formControl]="filterTerm">
-      <i class="icon-md ri-search-line" matSuffix *ngIf="!filterTerm.value"></i>      
-      <button style="top:5px" mat-icon-button matSuffix *ngIf="filterTerm.value" (click)="filterTerm.setValue('')">
-        <div style="padding-top:5px">
-          <i class="icon-lg ri-close-fill"></i>
-        </div>
-      </button>
-    </mat-form-field>
-  </div>   
+<div class="dataset-picker-container">
+  
+  <div fxLayout="row" cdkDropListGroup fxLayoutGap="16px">
 
+    <!-- x fields -->
+    <div fxLayout="column" fxFlex="50">
+      <div class="fields-container">
+        <span>
+          X Axis
+        </span>      
+        <div 
+          cdkDropList
+          class="fields-list"
+          (cdkDropListDropped)="dropXField($event)">
+          <ng-container *ngIf="!!xAxisField; else emptyFields">
+            <div class="field-box" *ngFor="let xField of [xAxisField]" cdkDrag>{{fieldLabel(xField)}}</div>        
+          </ng-container>
 
-  <!-- all fields -->
-  <mat-accordion multi="true" *ngIf="showFields; else tablesOnly">
- 
-    <mat-expansion-panel [expanded]="!!filterTerm.value?.length" *ngFor="let db of filtredData">
-      <mat-expansion-panel-header class="main-color">
-        <mat-checkbox 
-          class="checklist-leaf-node"
-          [checked]="dbDescendantsAllSelected(db)"
-          [indeterminate]="dbDescendantsPartiallySelected(db)"
-          (change)="dbChanged($event.checked, db)"
-          (click)="$event.stopPropagation()">
-          {{ db.name }}
-        </mat-checkbox>
-      </mat-expansion-panel-header>
-      
-      <ng-container>                
-        <!-- tables -->
-        <div class="tree-padding">
-          <mat-accordion multi="true">        
-            <mat-expansion-panel [expanded]="!!filterTerm.value?.length" *ngFor="let table of db.itens">
-              <mat-expansion-panel-header class="main-color">
-                <mat-checkbox 
-                  class="checklist-leaf-node"
-                  [checked]="tableDescendantsAllSelected(table)"
-                  [indeterminate]="tableDescendantsPartiallySelected(table)"
-                  (change)="tableChanged($event.checked, table)"
-                  (click)="$event.stopPropagation()">
-                  {{ table.name }}
-                </mat-checkbox>
-              </mat-expansion-panel-header>
+        </div> 
+      </div>
 
-              <!-- fields -->
-              <div class="tree-padding">
-                <ng-container *ngFor="let field of table.itens">
-                  <mat-checkbox 
-                    class="checklist-leaf-node"
-                    [checked]="field.selected"
-                    (change)="fieldChanged($event.checked, field)">
-                    <i class="icon-md ri-node-tree"></i>&nbsp;{{ field.name }}
-                  </mat-checkbox>
-                </ng-container>
-              </div>
+      <!-- y fields -->
+      <div class="fields-container">
+        <span>
+          Y Axis
+        </span>      
+        <div 
+          cdkDropList
+          class="fields-list"
+          (cdkDropListDropped)="dropYField($event)">
 
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
+          <ng-container *ngIf="!!yAxisFields.length; else emptyFields">
+            <div class="field-box" *ngFor="let yField of yAxisFields" cdkDrag>{{ fieldLabel(yField.metaDataEntryId)}}</div>        
+          </ng-container>
+        </div>      
+      </div>
 
-      </ng-container>
-      
-    </mat-expansion-panel>
+    </div>
 
-  </mat-accordion>
+    <!-- data source -->
+    <app-datasource-tree fxFlex="50"
+      [showFields]="true"
+      [datasourceItems]="datasourceItems"></app-datasource-tree>
+
+  </div>
 
 </div>
 
-  <!-- template - tables only -->
-  <ng-template #tablesOnly>
 
-    <mat-accordion multi="true">
-
-      <mat-expansion-panel [expanded]="!!filterTerm.value?.length" *ngFor="let db of filtredData">
-        <mat-expansion-panel-header class="main-color">
-          <mat-checkbox 
-            class="checklist-leaf-node"
-            [checked]="dbDescendantsAllSelected(db)"
-            [indeterminate]="dbDescendantsPartiallySelected(db)"
-            (change)="dbChanged($event.checked, db)"
-            (click)="$event.stopPropagation()">
-            {{ db.name }}
-          </mat-checkbox>
-        </mat-expansion-panel-header>
-        
-        <ng-container>         
-
-          <!-- tables -->
-          <div class="tree-padding">
-            <ng-container *ngFor="let table of db.itens">
-              <mat-checkbox 
-                class="checklist-leaf-node"
-                [checked]="tableDescendantsAllSelected(table)"
-                [indeterminate]="tableDescendantsPartiallySelected(table)"
-                (change)="tableChanged($event.checked, table)">
-                {{ table.name }}
-              </mat-checkbox>
-            </ng-container>  
-          </div>
-  
-        </ng-container>
-        
-      </mat-expansion-panel>
-  
-    </mat-accordion>
-
-  </ng-template>
+<ng-template #emptyFields>
+  <span class="empty-fields-hint">Drag and drop your fields here</span>
+</ng-template>

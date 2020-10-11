@@ -95,17 +95,12 @@
         </label>
       </div>
 
-      <div fxLayout="column" fxLayoutGap="8px">
-        <label>X Axis</label>
-        <!--<app-datasource-tree 
-          [(datasourceItems)]="availableXDatasources"
-          [showFields]="true"></app-datasource-tree> -->
-
-
-        <label>Y Axis</label>
-        <!--<app-datasource-tree 
-          [(datasourceItems)]="availableYDatasources"
-          [showFields]="true"></app-datasource-tree> -->
+      <div fxLayout="column" fxLayoutGap="8px">       
+          <app-dataset-picker 
+            [datasourceItems]="availableYDatasources"
+            [(xAxisField)]="chart.XAxisMetadataEntry"
+            [yAxisFields]="chart.Fields">
+          </app-dataset-picker>
       </div>
 
     </mat-expansion-panel>

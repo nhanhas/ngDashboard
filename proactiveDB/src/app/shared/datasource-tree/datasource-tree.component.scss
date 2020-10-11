@@ -25,3 +25,36 @@
 .mat-expansion-panel-header {
   height: 40px !important;
 }
+
+
+
+.cdk-drag-preview {
+  background-color: #e8f0f6;
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+
+// when used as field picker
+.fields-picker { 
+  background: #e8f0f6 !important;
+  border-radius: 4px;
+  padding: 16px;
+
+  .filter-container {
+    background-color: white !important;
+    margin-bottom: 8px;
+  }
+
+  mat-tree {
+    background: unset !important;
+  }
+}
+
+.field-tree {
+  max-height: 280px;
+  overflow: auto;
+}
