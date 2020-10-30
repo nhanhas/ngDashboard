@@ -46,6 +46,34 @@ export class DashboardService {
     return this.apiService.GET(url);
   }
 
+  // dashboard
+  createDashboard(dashboard: DashboardItem): Observable<any> {
+    const url: string = `/ChartSet/Create?name=${dashboard.Name}`;
+
+    return this.apiService.POST(url)
+      .pipe(
+        filter((value: number) => !!value && value > 0)
+      );        
+  }
+
+  updateDashboard(dashboard: DashboardItem): Observable<any> {
+    const url: string = `/ChartSet/Update?chartSetId=${dashboard.Id}&name=${dashboard.Name}`;
+
+    return this.apiService.POST(url)
+      .pipe(
+        filter((value: number) => !!value && value > 0)
+      );       
+  }
+
+  deleteDashboard(dashboard: DashboardItem): Observable<any> {
+    const url: string = `/ChartSet/Delete?chartSetId=${dashboard.Id}`;
+
+    return this.apiService.POST(url)
+      .pipe(
+        filter((value: number) => !!value && value > 0)
+      );       
+  }
+
   // charts
   createChart(chart: ChartConfigItem): Observable<any> {
     const url: string = '/ChartConfig/Create';

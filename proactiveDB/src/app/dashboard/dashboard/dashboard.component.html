@@ -9,7 +9,7 @@
 
         <span [class.main-color]="tab.isActive">{{ dashboard.Name }}</span>  
 
-        <i class="icon-md ri-close-line tab-icon"></i> 
+        <i class="icon-md ri-close-line tab-icon" (click)="deleteDashboard(dashboard.Id)"></i> 
       </ng-template>
 
       
@@ -60,7 +60,7 @@
 
   <!-- +New tab -->
   <div class="actions-tabs-container main-color">
-    <div>+ New</div>
+    <div (click)="newDashboard()">+ New</div>
   </div>
 
 </div>

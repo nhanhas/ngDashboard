@@ -1,1 +1,29 @@
-<p>tab-toolbox works!</p>
+<div class="toolbox-header">
+  <h4 class="main-color">Toolbox</h4>
+  <hr> 
+</div>
+
+<div class="toolbox-body">
+
+  <mat-accordion multi="true">
+
+    <!-- dashboard config -->
+    <mat-expansion-panel [expanded]="true" *ngIf="dashboard">
+      <mat-expansion-panel-header class="main-color">
+        Configurations
+      </mat-expansion-panel-header>    
+    
+      <div style="margin: 0px 0 24px">
+        <label >
+          Name:
+          <input [(ngModel)]="dashboard.Name">
+        </label>
+      </div>
+      
+    </mat-expansion-panel>
+       
+    <button class="custom-button main-background-color white-color" (click)="saveDashboard$.next()">Save</button>
+
+  </mat-accordion>
+
+</div>

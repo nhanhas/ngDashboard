@@ -230,10 +230,31 @@ export class DashboardComponent implements OnInit {
   }
 
   // edit dashboard (tab)
+  newDashboard() {
+    const unsavedDashboardId = this.dashboards.reduce((min, dashboard) => dashboard.Id < min ? dashboard.Id : min, 0)
+
+    const newDashboard = Object.assign(new DashboardItem(), {Id: unsavedDashboardId - 1, Name: 'New'});
+    this.dashboards.push(newDashboard);
+
+    this.editDashboard(newDashboard.Id);
+  }
+
   editDashboard(id: number) {
-    console.log('editing tab', id);
-    // TODO - Toolbox service with object
-    this.router.navigate(['/', { outlets: {toolbox: 'tab-toolbox'} } ])
+    const dashboard = this.dashboards.find(tab => tab.Id === id);
+    
+    // set dashboard in edition
+    this.dashboardService.dashboardTab$.next(dashboard);
+    
+    this.router.navigate(['/', { outlets: {toolbox: 'tab-toolbox'} } ])    
+  }
+
+  deleteDashboard(id: number) {
+    // TODO - prompt user
+    const dashboard = this.dashboards.find(tab => tab.Id === id);
+    dashboard.Id < 0 
+      ? this.dashboards.splice(this.dashboards.indexOf(dashboard), 1)
+      : this.dashboardService.deleteDashboard(dashboard)  
+        .subscribe( value => value ? this.dashboards.splice(this.dashboards.indexOf(dashboard), 1) : null);
   }
 
   /**
