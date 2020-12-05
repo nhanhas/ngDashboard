@@ -4,7 +4,10 @@ import { Color, Label } from 'ng2-charts';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
+import { DashboardItem } from 'src/app/core/models/DashboardItem';
+import { SystemService } from 'src/app/core/system.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
+import { DashboardConfig } from 'src/app/dashboard/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-chart',
@@ -38,6 +41,7 @@ export class ChartComponent implements OnInit {
   destroy$ = new Subject<boolean>();
 
   constructor(
+    private systemService: SystemService,
     private dashboardService: DashboardService) { }
 
   ngOnInit() {
@@ -58,10 +62,10 @@ export class ChartComponent implements OnInit {
     if(this.chart.ChartConfigId < 0) { return }
     
     // load from server
-    const endDate = new Date();
-    const startDate = new Date() 
-    startDate.setMonth(endDate.getMonth() - 6);
-    
+    const datesFilter: { startDate: Date, endDate: Date } = this.dashboardDateFilters;
+    const endDate = datesFilter.endDate
+    const startDate = datesFilter.startDate
+        
     this.dashboardService.loadChartResults(this.chart.ChartConfigId, startDate, endDate)
     .subscribe(value => {
       // setup chart results
@@ -150,7 +154,24 @@ export class ChartComponent implements OnInit {
     console.log(this.chartData)
   }
 
-  
+  get dashboardDateFilters(): { startDate: Date, endDate: Date } {
+    const dashboardId = this.chart.ChartSetId;
+    
+    const dashboardConfig = this.systemService.dashboards$.value.find((value: DashboardItem) => value.Id === dashboardId);
+
+    const startDateFilter = dashboardConfig.Settings.find((setting: {Key: string, Value: string}) => setting.Key === 'startDateFilter');
+    const endDateFilter = dashboardConfig.Settings.find((setting: {Key: string, Value: string}) => setting.Key === 'endDateFilter');
+
+    // in case of no dates or wrong ones
+    const end = new Date();
+    const start = new Date();
+    start.setMonth(end.getMonth() - 6);
+    
+    return !!startDateFilter && !!endDateFilter 
+      ? { startDate: startDateFilter.Value, endDate: endDateFilter.Value }
+      : { startDate: start, endDate: end }
+
+  }
 
 
 

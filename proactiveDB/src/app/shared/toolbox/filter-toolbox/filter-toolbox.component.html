@@ -27,12 +27,14 @@
     <div (click)="newFilter()">+ Filter</div>
   </div>
 
+  <button class="custom-button main-background-color white-color" (click)="saveFilters$.next()">Save</button>
+
 </div>
 
 <ng-template #datepicker let-filter="filter" let-field="field" let-label="label">
   <mat-form-field fxFlex="50">
     <mat-label>{{ label }}</mat-label>
-    <input matInput [matDatepicker]="picker" [value]="filter[field]">
+    <input matInput [matDatepicker]="picker" [value]="filter[field]" [(ngModel)]="filter[field]">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>    
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>

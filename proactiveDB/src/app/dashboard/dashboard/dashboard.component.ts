@@ -8,7 +8,7 @@ import { ChartComponent } from 'src/app/shared/chart/chart.component';
 import { DashboardService } from '../dashboard.service';
 import { ApiService } from 'src/app/core/api.service';
 import { forkJoin, Observable, of } from 'rxjs';
-import { filter, map, mergeMap, tap } from 'rxjs/operators';
+import { filter, map, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
 import { SystemService } from 'src/app/core/system.service';
 
@@ -118,8 +118,14 @@ export class DashboardComponent implements OnInit {
         this.ready = true;
       })
 
-    // setup dashboards 
-    //this.setupDashboards();
+    // listen for filter changes
+    this.dashboardService.dateFiltersChanged$
+      .subscribe(_ => {
+        const dashboardActive = this.dashboards[this.activeDashboard];
+        
+        // trigger each visible chart update
+        dashboardActive.charts.forEach((chart: ChartConfigItem) => this.dashboardService.reloadData$.next(chart.ChartConfigId))
+      })
   }
   
   // load dashboards from server

@@ -5,6 +5,7 @@ import { ApiService } from '../core/api.service';
 import { ChartConfigItem } from '../core/models/ChartConfigItem';
 import { DashboardItem } from '../core/models/DashboardItem';
 import { VisualConfigItem } from '../core/models/VisualConfigItem';
+import { DashboardSetting } from '../shared/toolbox/filter-toolbox/filter-toolbox.component';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,8 @@ export class DashboardService {
   reloadData$ = new Subject<number>();
 
   dashboardTab$ = new BehaviorSubject<DashboardItem>(null);
+
+  dateFiltersChanged$ = new Subject<void>();
 
   constructor(
     private apiService: ApiService) { }
@@ -72,6 +75,12 @@ export class DashboardService {
       .pipe(
         filter((value: number) => !!value && value > 0)
       );       
+  }
+
+  saveDashboardSettings(dashboardSetting: DashboardSetting): Observable<any> {
+    const url: string = `/DashBoardSettings/CreateOrUpdate`;
+
+    return this.apiService.POST(url, dashboardSetting)    
   }
 
   // charts
