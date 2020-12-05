@@ -25,6 +25,7 @@ export class ChartComponent implements OnInit {
 
   chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
   };
 
   chartColors: Color[] = [

@@ -92,3 +92,7 @@ gridster-item {
   -moz-box-shadow: 0px 0px 12px 1px #326dff99;
   box-shadow: 0px 0px 11px 0px #326dff99;
 }
+
+.chart-wrapper {
+  height: calc(100% - 28px);
+}
