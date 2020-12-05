@@ -10,6 +10,7 @@ import { ApiService } from 'src/app/core/api.service';
 import { forkJoin, Observable, of } from 'rxjs';
 import { filter, map, mergeMap, tap } from 'rxjs/operators';
 import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
+import { SystemService } from 'src/app/core/system.service';
 
 export interface DashboardConfig {
   charts: []
@@ -68,6 +69,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private systemService: SystemService,
     private dashboardService: DashboardService) { }
 
   ngOnInit() {
@@ -78,7 +80,8 @@ export class DashboardComponent implements OnInit {
     ];
 
     // load dashboards
-    this.loadDashboards()
+    //this.loadDashboards() - now we load dashboards in systemService
+    this.systemService.dashboards$
       .pipe(
         filter((value: DashboardItem[]) => value && !!value.length),
 

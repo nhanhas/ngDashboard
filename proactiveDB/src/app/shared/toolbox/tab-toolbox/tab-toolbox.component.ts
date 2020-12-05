@@ -73,7 +73,7 @@ export class TabToolboxComponent implements OnInit {
     return this.dashboard.Id < 0 
       ? this.dashboardService.createDashboard(this.dashboard)
         .pipe(
-          tap((value: number) => this.dashboard.Id = value)
+          tap((value: number) => this.dashboard.Id = value),
         )
       : this.dashboardService.updateDashboard(this.dashboard);
   }

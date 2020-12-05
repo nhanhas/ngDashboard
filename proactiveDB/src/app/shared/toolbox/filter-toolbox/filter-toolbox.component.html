@@ -1,1 +1,39 @@
-<p>filter-toolbox works!</p>
+<div class="toolbox-header">
+  <h4 class="main-color">Filters</h4>
+  <hr> 
+</div>
+
+<div class="toolbox-body">
+  
+  <div *ngFor="let filter of filters; let i = index" fxLayout="column" class="filter-container">
+
+    <mat-form-field fxFlex="100">
+      <mat-label>Dashboard</mat-label>
+      <mat-select [(ngModel)]="filter.Id"> 
+        <mat-option *ngFor="let dashboard of dashboards" [value]="dashboard.Id">
+          {{dashboard.Name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    <div fxLayout="row" fxLayoutGap="16px">
+      <ng-content *ngTemplateOutlet="datepicker; context: {filter: filter, field: 'startDateFilter', label: 'Start date'}"></ng-content>
+      <ng-content *ngTemplateOutlet="datepicker; context: {filter: filter, field: 'endDateFilter', label: 'End date'}"></ng-content>
+    </div>
+
+  </div>
+
+  <div class="new-filter-btn main-color">
+    <div (click)="newFilter()">+ Filter</div>
+  </div>
+
+</div>
+
+<ng-template #datepicker let-filter="filter" let-field="field" let-label="label">
+  <mat-form-field fxFlex="50">
+    <mat-label>{{ label }}</mat-label>
+    <input matInput [matDatepicker]="picker" [value]="filter[field]">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>    
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</ng-template>
