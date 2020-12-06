@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { DashboardItem } from 'src/app/core/models/DashboardItem';
 import { SystemService } from 'src/app/core/system.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
@@ -41,6 +41,8 @@ export class FilterToolboxComponent implements OnInit {
     this.systemService.dashboards$
       .pipe(      
         takeUntil(this.destroy$),
+
+        tap(_ => this.filters = []),
       )
       .subscribe((value: DashboardItem[]) => {
         this.dashboards = value;
@@ -61,6 +63,19 @@ export class FilterToolboxComponent implements OnInit {
         switchMap(_ => this.saveFilters())
       )
       .subscribe(value => {
+
+        // update system dashboards
+        this.dashboards.forEach(dashboard => {
+          const newSettings: DashboardFilter = this.filters.find(filter => filter.Id === dashboard.Id);
+          if(newSettings) {
+            dashboard.Settings.find(setting => setting.Key === 'startDateFilter').Value = newSettings.startDateFilter.toISOString().split('T')[0];
+            
+            dashboard.Settings.find(setting => setting.Key === 'endDateFilter').Value = newSettings.endDateFilter.toISOString().split('T')[0];            
+          }          
+        })
+
+        this.systemService.dashboards$.next(this.dashboards);
+
         // shoot updates for dashboards
         this.dashboardService.dateFiltersChanged$.next();
       })

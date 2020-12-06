@@ -12,6 +12,9 @@ import { AuthService } from './auth/auth.service';
 import { SystemService } from './core/system.service';
 import { HttpClientModule } from '@angular/common/http';
 
+import 'hammerjs';
+import 'chartjs-plugin-zoom';
+
 // start app system
 export function start(systemService: SystemService, authService: AuthService) {
   return () => systemService.start(authService);

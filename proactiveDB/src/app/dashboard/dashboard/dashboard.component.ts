@@ -8,7 +8,7 @@ import { ChartComponent } from 'src/app/shared/chart/chart.component';
 import { DashboardService } from '../dashboard.service';
 import { ApiService } from 'src/app/core/api.service';
 import { forkJoin, Observable, of } from 'rxjs';
-import { filter, map, mergeMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, mergeMap, take, takeUntil, tap } from 'rxjs/operators';
 import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
 import { SystemService } from 'src/app/core/system.service';
 
@@ -83,6 +83,8 @@ export class DashboardComponent implements OnInit {
     //this.loadDashboards() - now we load dashboards in systemService
     this.systemService.dashboards$
       .pipe(
+        take(1),
+
         filter((value: DashboardItem[]) => value && !!value.length),
 
         tap((value: DashboardItem[]) => this.dashboards = value),
