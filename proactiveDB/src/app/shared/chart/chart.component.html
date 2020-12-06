@@ -1,5 +1,5 @@
-<div style="height: 100%">
-  <div style="display: block; height: 100%">
+<div style="height: 100%" [ngClass]="{ 'loading-state': loading }">
+  <div style="display: block; height: 100%" *ngIf="!loading; else loadingSpinner">
     <!-- pick the right chart -->
     <ng-container [ngSwitch]="chart.ChartType">
       <ng-container *ngSwitchCase="'line'">
@@ -95,4 +95,10 @@
     chartType="bubble" 
     [plugins]="chartPlugins">
   </canvas>
+</ng-template>
+
+<ng-template #loadingSpinner>
+  <div>
+    <mat-spinner class="custom-spinner" diameter="40"></mat-spinner>
+  </div>  
 </ng-template>

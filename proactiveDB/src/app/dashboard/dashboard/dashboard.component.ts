@@ -281,16 +281,19 @@ export class DashboardComponent implements OnInit {
 
   deleteChart(chart: ChartConfigItem) {
     event.stopImmediatePropagation();
-    const itemDeleted = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === chart.ChartConfigId);
+  
+    const itemDeleted: ChartConfigItem = this.dashboards[this.activeDashboard].charts.find((value: ChartConfigItem) => value.ChartConfigId === chart.ChartConfigId);
 
-    this.dashboardService.deleteChart(itemDeleted)
-      .subscribe(value => {
-        console.log('removed chart', value)
-        this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
-        
-        // close panel
-        this.router.navigate(['/', { outlets: {toolbox: null} } ])
-      })
+    itemDeleted.ChartConfigId < 0 
+    ? this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1)
+    : this.dashboardService.deleteChart(itemDeleted)
+        .subscribe(value => {
+          console.log('removed chart', value)
+          this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1);
+          
+          // close panel
+          this.router.navigate(['/', { outlets: {toolbox: null} } ])
+        })
     
     
     
@@ -302,7 +305,7 @@ export class DashboardComponent implements OnInit {
     if(chart.ChartConfigId < 0) { return; }
 
     // update chart
-    this.dashboardService.updateChart(chart)
+    this.dashboardService.updateChart(chart, false)
       .subscribe(value => {
         console.log(value)
       })

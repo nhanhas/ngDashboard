@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, finalize, takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DashboardItem } from 'src/app/core/models/DashboardItem';
 import { SystemService } from 'src/app/core/system.service';
@@ -17,11 +17,15 @@ import { DashboardConfig } from 'src/app/dashboard/dashboard/dashboard.component
 export class ChartComponent implements OnInit {
   @Input() chart: ChartConfigItem;
 
+  // development
   chartData: ChartDataSets[] = [
-    { data: [85, 72, 78, 75, 77, 75], label: 'Crude oil prices' },
+    { data: [], label: '' },
   ];
+  chartLabels: Label[] = []; 
+  
 
-  chartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June'];
+  //chartData: ChartDataSets[] = [];
+  //chartLabels: Label[] = [];
 
   chartOptions = {
     responsive: true,
@@ -38,6 +42,8 @@ export class ChartComponent implements OnInit {
   chartLegend = true;
   chartPlugins = [];
 
+  loading: boolean;
+
   // unsubscribe
   destroy$ = new Subject<boolean>();
 
@@ -50,8 +56,12 @@ export class ChartComponent implements OnInit {
     this.dashboardService.reloadData$
       .pipe(
         takeUntil(this.destroy$),
-        
-        filter((value: number) => this.chart.ChartConfigId === value)
+
+        filter((value: number) => this.chart.ChartConfigId === value),
+
+        tap(_ => this.loading = true),
+
+        finalize(() => this.loading = false)
       )      
       .subscribe(_ => this.loadChartResults())
 
@@ -61,6 +71,7 @@ export class ChartComponent implements OnInit {
 
   private loadChartResults() {
     if(this.chart.ChartConfigId < 0) { return }
+    this.loading = true;
     
     // load from server
     const datesFilter: { startDate: Date, endDate: Date } = this.dashboardDateFilters;
@@ -68,6 +79,9 @@ export class ChartComponent implements OnInit {
     const startDate = datesFilter.startDate
         
     this.dashboardService.loadChartResults(this.chart.ChartConfigId, startDate, endDate)
+    .pipe(           
+      finalize(() => this.loading = false)
+    )
     .subscribe(value => {
       // setup chart results
       this.setupChart(value);

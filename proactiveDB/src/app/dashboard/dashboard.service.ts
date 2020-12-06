@@ -93,12 +93,12 @@ export class DashboardService {
       );        
   }
 
-  updateChart(chart: ChartConfigItem): Observable<any> {
+  updateChart(chart: ChartConfigItem, forceReload: boolean = true): Observable<any> {
     const url: string = '/ChartConfig/Update';
 
     return this.apiService.POST(url, chart)
       .pipe(
-        filter((value: boolean) => value),
+        filter((value: boolean) => value && forceReload),
 
         tap(_ => this.reloadData$.next(chart.ChartConfigId))
       );                
