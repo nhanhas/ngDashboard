@@ -19,13 +19,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DatasetPickerComponent } from './dataset-picker/dataset-picker.component';
 import { FilterToolboxComponent } from './toolbox/filter-toolbox/filter-toolbox.component';
+import { VisualComponent } from './visual/visual.component';
+import { VisualContainerComponent } from './visual/visual-container/visual-container.component';
 
 
 
 
 
 @NgModule({
-  declarations: [MenuComponent, TabToolboxComponent, DatasourceToolboxComponent, ChartComponent, AdsenseComponent, UserInfoComponent, WidgetToolboxComponent, DatasourceTreeComponent, DatasetPickerComponent, FilterToolboxComponent],
+  declarations: [MenuComponent, 
+    TabToolboxComponent, 
+    DatasourceToolboxComponent, 
+    ChartComponent, 
+    AdsenseComponent, 
+    UserInfoComponent, 
+    WidgetToolboxComponent, 
+    DatasourceTreeComponent, 
+    DatasetPickerComponent, 
+    FilterToolboxComponent, 
+    VisualComponent, 
+    VisualContainerComponent
+  ],
   imports: [
     CommonModule,
     MaterialModule,
@@ -49,8 +63,9 @@ import { FilterToolboxComponent } from './toolbox/filter-toolbox/filter-toolbox.
     AdsenseComponent,
     FormsModule,
     ReactiveFormsModule,
-    UserInfoComponent
-
+    UserInfoComponent,
+    VisualComponent,
+    VisualContainerComponent
   ]
 })
 export class SharedModule { }

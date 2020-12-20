@@ -146,4 +146,11 @@ export class DashboardService {
     return this.apiService.POST(url)                 
   }
 
+    // load visuals by dashboard
+    loadVisualsByDashboard(id: number): Observable<any>{
+      const url: string = `/VisualItemConfig/Get?visualItemConfigId=${id}`;
+  
+      return this.apiService.GET(url);
+    }
+
 }

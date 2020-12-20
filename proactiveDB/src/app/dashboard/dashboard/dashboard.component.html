@@ -18,7 +18,7 @@
         <gridster [options]="options" *ngIf="ready">
           
           <!-- charts -->
-          <gridster-item [id]="chart.ChartConfigId" [item]="chart.gridConfig" [class.item-editing]="editingChartId === chart.ChartConfigId" *ngFor="let chart of dashboard.charts" (click)="editChart(chart)">
+          <gridster-item [id]="chart.ChartConfigId" [item]="chart.gridConfig" [class.item-editing]="editingChartId === chart.ChartConfigId" *ngFor="let chart of chartsCollection" (click)="editChart(chart)">
             <!-- toolbar -->
             <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- title and edit -->
@@ -36,7 +36,7 @@
           </gridster-item>
 
           <!-- visual -->
-          <gridster-item [id]="visual.VisualConfigId" [item]="visual.gridConfig" [class.item-editing]="editingVisualId === visual.VisualConfigId" *ngFor="let visual of dashboard.visuals" (click)="editVisual(visual)">
+          <gridster-item [id]="visual.VisualConfigId" [item]="visual.gridConfig" [class.item-editing]="editingVisualId === visual.VisualConfigId" *ngFor="let visual of visualsCollection" (click)="editVisual(visual)">
             <!-- toolbar -->
             <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
               <!-- title and edit -->
@@ -48,7 +48,8 @@
               <i class="icon-md ri-close-line tab-icon" (click)="deleteVisual(visual)"></i> 
             </div>
             
-            <div class="gridster-item-content no-drag">
+            <div class="gridster-item-content no-drag visual-wrapper">
+              <app-visual [visual]="visual" [dashboard]="dashboard"></app-visual>
             </div>
           </gridster-item>
 

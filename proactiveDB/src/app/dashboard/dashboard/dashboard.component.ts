@@ -103,8 +103,20 @@ export class DashboardComponent implements OnInit {
               )
           });
 
+          // prepare chart request for each dasbhoard item
+          const visuals = value.map((dashboard: DashboardItem) => {
+            return this.loadVisualsByDashboard(dashboard.Id)
+              .pipe(
+                tap((visuals: VisualConfigItem[]) => {
+                  
+                  // assign charts to dashboard
+                  dashboard.visuals = visuals
+                })
+              )
+          });
+
           // TODO - add more items here to load and then , forkJoin
-          return forkJoin([...charts])
+          return forkJoin([...charts, ...visuals])
             .pipe(
               map(_ => value)
             );
@@ -114,6 +126,12 @@ export class DashboardComponent implements OnInit {
         // update charts dashboard due to grister config
         this.dashboards.forEach(value => value.charts.forEach((chart:ChartConfigItem) => {
           chart.gridConfig = { x: chart.PosX, y: chart.PosY, cols: chart.Width, rows: chart.Heigth, collection: 'charts', id: chart.ChartConfigId, layerIndex: 2 }
+          }) 
+        )
+
+        // update visuals dashboard due to grister config
+        this.dashboards.forEach(value => value.visuals.forEach((visual:VisualConfigItem) => {
+          visual.gridConfig = { x: visual.PosX, y: visual.PosY, cols: visual.Width, rows: visual.Heigth, collection: 'visuals', id: visual.VisualConfigId, layerIndex: 2 }
           }) 
         )
 
@@ -145,6 +163,15 @@ export class DashboardComponent implements OnInit {
       .pipe(
          // parse to known model
          map((value: any[]) => value.map(item =>  Object.assign(new ChartConfigItem(), item)))        
+      )
+  }
+
+  // load visual by dashboard id
+  private loadVisualsByDashboard(id: number): Observable<VisualConfigItem[]>{
+    return this.dashboardService.loadVisualsByDashboard(id)
+      .pipe(
+          // parse to known model
+          map((value: any[]) => value.map(item =>  Object.assign(new VisualConfigItem(), item)))        
       )
   }
 
@@ -297,8 +324,6 @@ export class DashboardComponent implements OnInit {
           this.router.navigate(['/', { outlets: {toolbox: null} } ])
         })
     
-    
-    
   }
   
   // update chart config on server
@@ -360,11 +385,18 @@ export class DashboardComponent implements OnInit {
 
   deleteVisual(visual: VisualConfigItem) {
     event.stopImmediatePropagation();
-    const itemDeleted = this.dashboards[this.activeDashboard].visuals.find((value: VisualConfigItem) => value.VisualConfigId === visual.VisualConfigId);
-    this.dashboards[this.activeDashboard].visuals.splice(this.dashboards[this.activeDashboard].visuals.indexOf(itemDeleted), 1);
-        
-    // close panel
-    this.router.navigate(['/', { outlets: {toolbox: null} } ])
+    const itemDeleted: VisualConfigItem = this.dashboards[this.activeDashboard].visuals.find((value: VisualConfigItem) => value.VisualConfigId === visual.VisualConfigId);
+
+    itemDeleted.VisualConfigId < 0 
+    ? this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1)
+    : this.dashboardService.deleteVisual(itemDeleted)
+        .subscribe(value => {
+          console.log('removed visual', value)
+          this.dashboards[this.activeDashboard].visuals.splice(this.dashboards[this.activeDashboard].visuals.indexOf(itemDeleted), 1);
+          
+          // close panel
+          this.router.navigate(['/', { outlets: {toolbox: null} } ])
+        })
   }
 
   // update visual config on server
@@ -377,7 +409,7 @@ export class DashboardComponent implements OnInit {
     .subscribe(value => {
       console.log(value)
     })
-}
+  }
 
   // specific drop visual handler
   private onDropVisual(visualType: number, emptyCellItem: GridsterItem) {
@@ -389,7 +421,7 @@ export class DashboardComponent implements OnInit {
       Name: 'new',
       PosX: emptyCellItem.x, PosY: emptyCellItem.y,
       Width: 6, Heigth: 4,    
-      Settings: [ {key: 'layerIndex', value: visualType === 1 ? 1 : 2} ]  
+      Settings: [ {Key: 'layerIndex', Value: visualType === 1 ? 1 : 2} ]  
     })
 
     this.dashboards[this.activeDashboard].visuals.push(newVisual);
@@ -399,7 +431,7 @@ export class DashboardComponent implements OnInit {
 
     // update grister-item with chartConfig positioning/size
     this.dashboards.forEach(value => value.visuals.forEach((visual: VisualConfigItem) => {
-      const layerSetting = visual.Settings.find(setting => setting.key === 'layerIndex').value as number;
+      const layerSetting = visual.Settings.find(setting => setting.Key === 'layerIndex').Value as number;
       
       visual.gridConfig = { x: visual.PosX, y: visual.PosY, cols: visual.Width, rows: visual.Heigth, collection: 'visuals', id: visual.VisualConfigId, layerIndex: layerSetting}
       }) 
@@ -456,6 +488,22 @@ export class DashboardComponent implements OnInit {
     // drop visual - TODO
     if(collection === 'visuals'){ return this.onDropVisual(type, emptyCellItem) }
 
+  }
+
+  get chartsCollection(): ChartConfigItem[] {
+    return this.dashboards[this.activeDashboard].charts.filter(value => {
+      if(!value.Settings) { return false }; // TODO - remove when chartConfig has Settings field
+      const container = value.Settings.find(setting => setting.Key === 'visualContainer');
+      return !container 
+    })
+  }
+
+  get visualsCollection(): VisualConfigItem[] {
+    return this.dashboards[this.activeDashboard].visuals.filter(value => {
+      if(!value.Settings) { return false }; // TODO - remove when chartConfig has Settings field
+      const container = value.Settings.find(setting => setting.Key === 'visualContainer');
+      return !container 
+    })
   }
 
 } 

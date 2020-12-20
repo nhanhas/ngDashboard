@@ -1,0 +1,33 @@
+// grid
+gridster {
+  background-color: #e8f0f6;
+}
+gridster-item {
+  -webkit-box-shadow: 0px 0px 12px 1px rgba(199,193,199,1);
+  -moz-box-shadow: 0px 0px 12px 1px rgba(199,193,199,1);
+  box-shadow: 0px 0px 12px 1px rgba(199,193,199,1);
+  border-radius: 5px;
+}
+
+::ng-deep gridster-preview.gridster-preview {
+  background: #f1f1f1;
+}
+
+// tiles grid item
+.tile-header {
+  padding: 4px 8px;
+  i {
+    cursor: pointer;
+  }
+}
+
+.item-editing {  
+  border: 2px solid #326dff;
+  -webkit-box-shadow: 0px 0px 12px 1px #326dff99;
+  -moz-box-shadow: 0px 0px 12px 1px #326dff99;
+  box-shadow: 0px 0px 11px 0px #326dff99;
+}
+
+.chart-wrapper, .visual-wrapper {
+  height: calc(100% - 32px);
+}

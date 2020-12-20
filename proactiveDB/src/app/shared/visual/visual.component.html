@@ -1,0 +1,9 @@
+<!-- container -->
+<ng-container *ngIf="visual.VisualType === 1">
+  <app-visual-container [visual]="visual" [dashboardItem]="dashboard"></app-visual-container>
+</ng-container>
+
+<!-- Label -->
+<ng-container *ngIf="visual.VisualType === 2">
+  Label
+</ng-container>
