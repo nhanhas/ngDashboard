@@ -59,7 +59,8 @@ export class VisualContainerComponent implements OnInit {
     private systemService: SystemService,
     private dashboardService: DashboardService) { }
 
-  ngOnInit() {
+  ngOnInit() {    
+    this.options.defaultLayerIndex = +this.layerSetting+1;
   }
   
   /**
@@ -146,14 +147,13 @@ export class VisualContainerComponent implements OnInit {
       DashBoardId: this.dashboardItem.Id,
       Name: 'new',
       PosX: emptyCellItem.x, PosY: emptyCellItem.y,
-      Width: 6, Heigth: 4,    
+      Width: 2, Heigth: 2,    
       Settings: [ 
-        {Key: 'layerIndex', Value: visualType === 1 ? 1 : 2} ,
+        {Key: 'layerIndex', Value: visualType === 1 ? (+this.layerSetting + 1)  : (+this.layerSetting + 2)} ,
         {Key: 'visualContainer', Value: this.visual.VisualConfigId}
 
       ]  
     })
-
     this.dashboardItem.visuals.push(newVisual);
 
     // edit new visual in toolbox 
@@ -163,7 +163,7 @@ export class VisualContainerComponent implements OnInit {
     this.dashboardItem.visuals.forEach((visual: VisualConfigItem) => {
       const layerSetting = visual.Settings.find(setting => setting.Key === 'layerIndex').Value as number;
       
-      visual.gridConfig = { x: visual.PosX, y: visual.PosY, cols: visual.Width, rows: visual.Heigth, collection: 'visuals', id: visual.VisualConfigId, layerIndex: layerSetting}
+      visual.gridConfig = { x: visual.PosX, y: visual.PosY, cols: visual.Width, rows: visual.Heigth, collection: 'visuals', id: visual.VisualConfigId, layerIndex: layerSetting } 
     });
   }
 
@@ -179,11 +179,18 @@ export class VisualContainerComponent implements OnInit {
 
   deleteVisual(visual: VisualConfigItem) {
     event.stopImmediatePropagation();
-    const itemDeleted = this.dashboardItem.visuals.find((value: VisualConfigItem) => value.VisualConfigId === visual.VisualConfigId);
-    this.dashboardItem.visuals.splice(this.dashboardItem.visuals.indexOf(itemDeleted), 1);
-        
-    // close panel
-    this.router.navigate(['/', { outlets: {toolbox: null} } ])
+    const itemDeleted: VisualConfigItem = this.dashboardItem.visuals.find((value: VisualConfigItem) => value.VisualConfigId === visual.VisualConfigId);
+
+    itemDeleted.VisualConfigId < 0 
+    ? this.dashboardItem.charts.splice(this.dashboardItem.charts.indexOf(itemDeleted), 1)
+    : this.dashboardService.deleteVisual(itemDeleted)
+        .subscribe(value => {
+          console.log('removed visual', value)
+          this.dashboardItem.visuals.splice(this.dashboardItem.visuals.indexOf(itemDeleted), 1);
+          
+          // close panel
+          this.router.navigate(['/', { outlets: {toolbox: null} } ])
+        })
   }
 
   // update visual config on server
@@ -200,6 +207,7 @@ export class VisualContainerComponent implements OnInit {
 
   // on drop a new item into dashboard
   onDrop(ev, emptyCellItem: GridsterItem) {    
+    event.stopPropagation();
     const { collection, type } = JSON.parse(ev.dataTransfer.getData("widgetConfig"));
     
     // drop chart
@@ -280,6 +288,10 @@ export class VisualContainerComponent implements OnInit {
     
     const { ChartConfigId } = this.dashboardService.chart$.value;
     return ChartConfigId || 0;
+  }
+
+  get layerSetting(): number {
+    return this.visual.Settings.find(setting => setting.Key === 'layerIndex').Value as number;
   }
 
   get chartsCollection(): ChartConfigItem[] {

@@ -20,7 +20,7 @@
   </gridster-item>
 
   <!-- visual -->
-  <gridster-item [id]="visual.VisualConfigId" [item]="visual.gridConfig" [class.item-editing]="editingVisualId === visual.VisualConfigId" *ngFor="let visual of visualsCollection">
+  <gridster-item [id]="visual.VisualConfigId" [item]="visual.gridConfig" [class.item-editing]="editingVisualId === visual.VisualConfigId" *ngFor="let visual of visualsCollection" (click)="editVisual(visual)">
     <!-- toolbar -->
     <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
       <!-- title and edit -->
@@ -29,10 +29,10 @@
         <span>{{ visual.Name }}</span>
       </div>
       <!-- remove -->
-      <i class="icon-md ri-close-line tab-icon"></i> 
+      <i class="icon-md ri-close-line tab-icon" (click)="deleteVisual(visual)"></i> 
     </div>
     
-    <div class="gridster-item-content no-drag">
-      <!--<app-visual [visual]="visual" [dashboard]="dashboardItem"></app-visual>-->
+    <div class="gridster-item-content no-drag visual-wrapper">
+      <app-visual [visual]="visual" [dashboard]="dashboardItem"></app-visual>
     </div>
   </gridster-item>
