@@ -21,6 +21,7 @@ import { DatasetPickerComponent } from './dataset-picker/dataset-picker.componen
 import { FilterToolboxComponent } from './toolbox/filter-toolbox/filter-toolbox.component';
 import { VisualComponent } from './visual/visual.component';
 import { VisualContainerComponent } from './visual/visual-container/visual-container.component';
+import { SnapshotComponent } from '../shared/snapshot/snapshot.component';
 
 
 
@@ -38,7 +39,8 @@ import { VisualContainerComponent } from './visual/visual-container/visual-conta
     DatasetPickerComponent, 
     FilterToolboxComponent, 
     VisualComponent, 
-    VisualContainerComponent
+    VisualContainerComponent, 
+    SnapshotComponent
   ],
   imports: [
     CommonModule,
@@ -65,7 +67,8 @@ import { VisualContainerComponent } from './visual/visual-container/visual-conta
     ReactiveFormsModule,
     UserInfoComponent,
     VisualComponent,
-    VisualContainerComponent
+    VisualContainerComponent,
+    SnapshotComponent
   ]
 })
 export class SharedModule { }

@@ -138,7 +138,7 @@ export class DashboardService {
 
     return this.apiService.POST(url, visual)
       .pipe(
-        filter((value: boolean) => value)
+        filter((value: boolean) => value),
       );                
   }
 
@@ -166,11 +166,13 @@ export class DashboardService {
   }
 
   updateSnapshot(snapshot: SnapshotConfigItem): Observable<any> {
-    const url: string = '/SnapShotConfig/Update';
+    const url: string = '/SnapShotConfig/UpdateSnapShotConfig';
 
     return this.apiService.POST(url, snapshot)
       .pipe(
-        filter((value: boolean) => value)
+        filter((value: boolean) => value),
+
+        tap(_ => this.reloadData$.next(snapshot.SnapShotConfigId))
       );                
   }
 
@@ -185,6 +187,28 @@ export class DashboardService {
     const url: string = `/SnapShotConfig/GetSnapShotConfigByDashBoardId?SnapShotConfigId=${id}`;
 
     return this.apiService.GET(url);
+  }
+
+  loadSnapshotTableResults(id: number, startDate: Date, endDate: Date): Observable<any>{
+    const url: string = '/DataEntries/GetTAbleDataEntriesByObjectId';
+
+    return this.apiService.POST(url, {
+      ChartId: id,
+      StartingDate: startDate,
+      EndingDate: endDate        
+    });        
+    
+  }
+
+  loadSnapshotResults(id: number, startDate: Date, endDate: Date): Observable<any>{
+    const url: string = '/DataEntries/GetDataEntriesByObjectId';
+
+    return this.apiService.POST(url, {
+      ChartId: id,
+      StartingDate: startDate,
+      EndingDate: endDate        
+    });        
+    
   }
 
 }

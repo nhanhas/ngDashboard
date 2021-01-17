@@ -1,0 +1,18 @@
+.snapshot-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-state {
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+:host ::ng-deep .custom-spinner circle{   
+  stroke: #326dff;
+}

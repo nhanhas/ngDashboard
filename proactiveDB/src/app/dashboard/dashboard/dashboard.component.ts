@@ -520,7 +520,7 @@ export class DashboardComponent implements OnInit {
     const unsavedSnapshotId = this.dashboards[this.activeDashboard].snapshots.reduce((min, snapshot) => snapshot.SnapShotConfigId < min ? snapshot.SnapShotConfigId : min, 0)
     const newSnapshot: SnapshotConfigItem = Object.assign(new SnapshotConfigItem(), {
       SnapShotConfigId: unsavedSnapshotId - 1,
-      SnapshotType: snapshotType,
+      SnapShotType: snapshotType,
       DashBoardId: this.dashboards[this.activeDashboard].Id,
       Name: 'new',
       PosX: emptyCellItem.x, PosY: emptyCellItem.y,

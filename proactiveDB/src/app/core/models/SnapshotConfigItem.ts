@@ -6,8 +6,8 @@ export class SnapshotConfigItem{
   SnapShotConfigId: number;
   Name: string = '';
   Description: string = '';
-  DashboardId: number;
-  SnapshotType: number;
+  DashBoardId: number;
+  SnapShotType: number;
   BackgroundColor: string = '';
   Color: string = '';
   PosX: number;

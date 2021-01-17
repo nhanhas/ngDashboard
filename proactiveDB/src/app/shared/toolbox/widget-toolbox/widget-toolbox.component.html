@@ -42,6 +42,8 @@
       <ng-content *ngTemplateOutlet="!!chart ? editingChartConfig : null"></ng-content>
 
       <ng-content *ngTemplateOutlet="!!visual ? editingVisualConfig : null"></ng-content>
+
+      <ng-content *ngTemplateOutlet="!!snapshot ? editingSnapshotConfig : null"></ng-content>
     </ng-container>
 
   </mat-accordion>
@@ -186,7 +188,7 @@
     <div class="widget text-color">
       <div         
         class="widget-icon white-color main-background-color" 
-        [class.green-background-color]="snapshot && type.snapshot === snapshot.SnapshotType"
+        [class.green-background-color]="snapshot && type.snapshot === snapshot.SnapShotType"
         [ngClass]="{ 
           'disabled-background-color disabled': isSnapshotWidgetDisabled(type)
         }"
@@ -213,7 +215,7 @@
 </ng-template>
 
 <!-- snapshot editing -->
-<ng-template #editingChartConfig>
+<ng-template #editingSnapshotConfig>
   <div fxLayout="column">
     <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header class="main-color">

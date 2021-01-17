@@ -235,7 +235,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   
   // we are editing element or creating a new one
   get isEditing(): boolean {
-    return !!this.chart || !!this.visual || !!this.visual;
+    return !!this.chart || !!this.visual || !!this.snapshot;
   }
 
   // visuals
@@ -264,7 +264,8 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     return this.snapshot.SnapShotConfigId < 0 
       ? this.dashboardService.createSnapshot(this.snapshot)
         .pipe(
-          tap((value: number) => this.snapshot.SnapShotConfigId = value)
+          tap((value: number) => this.snapshot.SnapShotConfigId = value),
+          tap(_ => this.dashboardService.reloadData$.next(this.snapshot.SnapShotConfigId))
         )
       : this.dashboardService.updateSnapshot(this.snapshot);
   }
@@ -275,6 +276,6 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     if(!this.snapshot) { return false; }
     
     // there is no compatibility
-    return this.snapshot.SnapshotType !== type.snapshotType;
+    return this.snapshot.SnapShotType !== type.snapshotType;
   }
 }
