@@ -7,14 +7,20 @@
 
   <mat-accordion multi="true">
 
-    <!-- chart types -->
+    <!-- chart/snapshot types -->
     <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header class="main-color">
         Chart types
       </mat-expansion-panel-header>
       
+      <!-- charts -->
       <ng-container *ngFor="let chartType of chartTypes"> 
         <ng-content *ngTemplateOutlet="chartWidget; context: {type: chartType, draggable: !isEditing}"></ng-content>
+      </ng-container>
+
+      <!-- snapshots -->
+      <ng-container *ngFor="let snapshotType of snapshotTypes"> 
+        <ng-content *ngTemplateOutlet="snapshotWidget; context: {type: snapshotType, draggable: !isEditing}"></ng-content>
       </ng-container>
       
     </mat-expansion-panel>
@@ -170,5 +176,76 @@
     </mat-expansion-panel>
 
     <button class="custom-button main-background-color white-color" (click)="saveVisual$.next()">Save</button>
+  </div>
+</ng-template>
+
+
+<!-- snapshot widget template -->
+<ng-template #snapshotWidget let-type="type" let-draggable="draggable">
+  <ng-container [ngSwitch]="type.snapshotType">
+    <div class="widget text-color">
+      <div         
+        class="widget-icon white-color main-background-color" 
+        [class.green-background-color]="snapshot && type.snapshot === snapshot.SnapshotType"
+        [ngClass]="{ 
+          'disabled-background-color disabled': isSnapshotWidgetDisabled(type)
+        }"
+        [draggable]="draggable" 
+        (dragstart)="draggable ? onDrag($event, { collection: 'snapshots', type: type.snapshotType }) : null">
+
+        <i *ngSwitchCase="0" class="icon-lg ri-keyboard-box-line"></i>
+        <i *ngSwitchCase="1" class="icon-lg ri-table-2"></i>
+        <i *ngSwitchCase="2" class="icon-lg ri-list-check-2"></i>
+        <i *ngSwitchCase="3" class="icon-lg ri-dashboard-2-line"></i>
+
+        <i *ngSwitchDefault class="icon-lg ri-question-line"></i>
+      </div>
+      
+      <span *ngSwitchCase="0">Card</span>
+      <span *ngSwitchCase="1">Table</span>
+      <span *ngSwitchCase="2">List</span>
+      <span *ngSwitchCase="3">Gauge</span>
+
+      <span *ngSwitchDefault>Unknown</span>
+    </div>
+    
+  </ng-container>
+</ng-template>
+
+<!-- snapshot editing -->
+<ng-template #editingChartConfig>
+  <div fxLayout="column">
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header class="main-color">
+        Configurations
+      </mat-expansion-panel-header>    
+    
+      <div style="margin: 0px 0 24px">
+        <label >
+          Name:
+          <input [(ngModel)]="snapshot.Name">
+        </label>
+      </div>
+
+      <!-- data/shaping -->
+      <mat-tab-group>
+        <mat-tab label="Data">
+          <div fxLayout="column" fxLayoutGap="8px">       
+            <app-dataset-picker 
+              [datasourceItems]="availableDatasources"
+              [(yAxisFields)]="snapshot.Fields">
+            </app-dataset-picker>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Shaping"></mat-tab>
+        
+      </mat-tab-group>
+
+      
+
+    </mat-expansion-panel>
+
+    <button class="custom-button main-background-color white-color" (click)="saveSnapshot$.next()">Save</button>
   </div>
 </ng-template>

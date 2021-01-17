@@ -4,6 +4,7 @@ import { filter, tap } from 'rxjs/operators';
 import { ApiService } from '../core/api.service';
 import { ChartConfigItem } from '../core/models/ChartConfigItem';
 import { DashboardItem } from '../core/models/DashboardItem';
+import { SnapshotConfigItem } from '../core/models/SnapshotConfigItem';
 import { VisualConfigItem } from '../core/models/VisualConfigItem';
 import { DashboardSetting } from '../shared/toolbox/filter-toolbox/filter-toolbox.component';
 
@@ -14,8 +15,8 @@ export class DashboardService {
   
   // widgets in edition
   chart$ = new BehaviorSubject<ChartConfigItem>(null);
-  snapshot$ = new BehaviorSubject<any>(null); // TODO - class snapshotconfig
-  visual$ = new BehaviorSubject<VisualConfigItem>(null); // TODO - class visualconfig
+  snapshot$ = new BehaviorSubject<SnapshotConfigItem>(null); 
+  visual$ = new BehaviorSubject<VisualConfigItem>(null); 
 
   reloadData$ = new Subject<number>();
 
@@ -146,11 +147,43 @@ export class DashboardService {
     return this.apiService.POST(url)                 
   }
 
-    // load visuals by dashboard
-    loadVisualsByDashboard(id: number): Observable<any>{
-      const url: string = `/VisualItemConfig/Get?visualItemConfigId=${id}`;
-  
-      return this.apiService.GET(url);
-    }
+  // load visuals by dashboard
+  loadVisualsByDashboard(id: number): Observable<any>{
+    const url: string = `/VisualItemConfig/Get?visualItemConfigId=${id}`;
+
+    return this.apiService.GET(url);
+  }
+
+  // snapshots
+  createSnapshot(snapshot: SnapshotConfigItem): Observable<any> {
+    const url: string = '/SnapShotConfig/Create';
+
+    return this.apiService.POST(url, snapshot)
+      .pipe(
+        filter((value: number) => !!value && value > 0)
+      );        
+  }
+
+  updateSnapshot(snapshot: SnapshotConfigItem): Observable<any> {
+    const url: string = '/SnapShotConfig/Update';
+
+    return this.apiService.POST(url, snapshot)
+      .pipe(
+        filter((value: boolean) => value)
+      );                
+  }
+
+  deleteSnapshot(snapshot: SnapshotConfigItem): Observable<any> {
+    const url: string = `/SnapShotConfig/DeleteSnapShot?SnapShotConfigId=${snapshot.SnapShotConfigId}`;
+
+    return this.apiService.POST(url)                 
+  }
+
+  // load snapshots by dashboard
+  loadSnapshotsByDashboard(id: number): Observable<any>{
+    const url: string = `/SnapShotConfig/GetSnapShotConfigByDashBoardId?SnapShotConfigId=${id}`;
+
+    return this.apiService.GET(url);
+  }
 
 }

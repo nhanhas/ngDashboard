@@ -3,6 +3,7 @@ import { Observable, of, Subject } from 'rxjs';
 import { filter, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DataSourceItem } from 'src/app/core/models/DataSourceItem';
+import { SnapshotConfigItem } from 'src/app/core/models/SnapshotConfigItem';
 import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
 import { SystemService } from 'src/app/core/system.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
@@ -17,6 +18,11 @@ export interface VisualTypes {
   description: string;
 }
 
+export interface SnapshotTypes {
+  snapshotType: number;
+  description: string;
+}
+
 @Component({
   selector: 'app-widget-toolbox',
   templateUrl: './widget-toolbox.component.html',
@@ -26,23 +32,24 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
 
   // supported chart types
   chartTypes: ChartTypes[] = [];
-
   // chart to edit
   chart: ChartConfigItem;
   saveChart$ = new Subject<void>();
 
-  // datasources to use on widgets
-  availableDatasources: DataSourceItem[] = [];   
-
   // supported visual types
   visualTypes: VisualTypes[] = [];
-
   // visual item to edit
   visual: VisualConfigItem;
   saveVisual$ = new Subject<void>();
 
-  // snapshot item to edit
-  snapshot: any;
+  // supported snapshot types
+  snapshotTypes: SnapshotTypes[] = [];
+  // snapshot to edit
+  snapshot: SnapshotConfigItem;
+  saveSnapshot$ = new Subject<void>();
+
+  // datasources to use on widgets
+  availableDatasources: DataSourceItem[] = [];   
 
   // unsubscribe
   destroy$ = new Subject<boolean>();
@@ -67,14 +74,24 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       { visualType: 1, description: 'container' },
       { visualType: 2, description: 'label' },
     ]
+
+    this.snapshotTypes = [
+      { snapshotType: 0, description: 'card' },
+      { snapshotType: 1, description: 'table' },
+      { snapshotType: 2, description: 'list' },
+      { snapshotType: 3, description: 'gauge' }
+    ]
     
     this.reset();
     const chart = this.dashboardService.chart$.value;
     const visual = this.dashboardService.visual$.value;
+    const snapshot = this.dashboardService.snapshot$.value;
     // use chart if exists
     if(chart) { this.chart = chart }
     // use visual if exists
     if(visual) { this.visual = visual }
+    // use snapshot if exists
+    if(snapshot) { this.snapshot = snapshot }
 
     // widget in edition [chart]
     this.dashboardService.chart$
@@ -105,7 +122,21 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       .subscribe((value: VisualConfigItem) => { 
         this.visual = value
       });
-    
+
+    // widget in edition [snapshot]
+    this.dashboardService.snapshot$
+      .pipe(
+        skip(1),
+
+        takeUntil(this.destroy$),
+        
+        tap(_ => this.reset()),
+
+        filter(value => !!value)
+      )
+      .subscribe((value: SnapshotConfigItem) => { 
+        this.snapshot = value
+      });
 
     // save chart
     this.saveChart$
@@ -135,6 +166,19 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
       console.log('visual saved', value)
     });
     
+    // save snapshot
+    this.saveSnapshot$
+    .pipe(
+      switchMap(_ => this.saveSnapshot())
+    )
+    .subscribe(value => {
+      // case of creation
+      if(typeof value === 'number'){ 
+        this.snapshot.SnapShotConfigId = value;
+      }
+      
+      console.log('snapshot saved', value)
+    });
 
   }
 
@@ -213,4 +257,23 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     return this.visual.VisualType !== type.visualType;
   }
 
+
+  // snapshots
+  private saveSnapshot(): Observable<any> {
+    return this.snapshot.SnapShotConfigId < 0 
+      ? this.dashboardService.createSnapshot(this.snapshot)
+        .pipe(
+          tap((value: number) => this.snapshot.SnapShotConfigId = value)
+        )
+      : this.dashboardService.updateSnapshot(this.snapshot);
+  }
+
+  // check if it is disable or is compatible with other
+  isSnapshotWidgetDisabled(type: any): boolean {
+    if(this.chart || this.visual) { return true; }
+    if(!this.snapshot) { return false; }
+    
+    // there is no compatibility
+    return this.snapshot.SnapshotType !== type.snapshotType;
+  }
 }
