@@ -5,7 +5,7 @@ export class VisualConfigItem {
   Id: number;
   DashBoardId: number;
   Name: string = '';
-  Settings: {Key: {}, Value: {}} [];
+  Settings: {Key: {}, Value: {}} [] = [];
   VisualConfigId: number;
   BackGroundColor: string = '';
   Color: string = '';

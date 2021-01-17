@@ -53,6 +53,24 @@
             </div>
           </gridster-item>
 
+          <!-- snapshot -->
+          <gridster-item [id]="snapshot.SnapShotConfigId" [item]="snapshot.gridConfig" [class.item-editing]="editingSnapshotId === snapshot.SnapShotConfigId" *ngFor="let snapshot of snapshotsCollection" (click)="editSnapshot(snapshot)">
+            <!-- toolbar -->
+            <div class="tile-header" fxLayout="row" fxLayoutAlign="space-between center">
+              <!-- title and edit -->
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
+                <i class="icon-md ri-drag-move-fill drag-handler" (click)="$event.stopPropagation()"></i>
+                <span>{{ snapshot.Name }}</span>
+              </div>
+              <!-- remove -->
+              <i class="icon-md ri-close-line tab-icon" (click)="deleteSnapshot(snapshot)"></i> 
+            </div>
+            
+            <div class="gridster-item-content no-drag snapshot-wrapper">
+              SNAPSHOT
+            </div>
+          </gridster-item>
+
         </gridster>
       </ng-template>
       

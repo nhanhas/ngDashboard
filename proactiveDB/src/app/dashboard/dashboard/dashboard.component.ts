@@ -11,10 +11,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { filter, map, mergeMap, take, takeUntil, tap } from 'rxjs/operators';
 import { VisualConfigItem } from 'src/app/core/models/VisualConfigItem';
 import { SystemService } from 'src/app/core/system.service';
-
-export interface DashboardConfig {
-  charts: []
-}
+import { SnapshotConfigItem } from 'src/app/core/models/SnapshotConfigItem';
 
 @Component({
   selector: 'app-dashboard',
@@ -103,20 +100,32 @@ export class DashboardComponent implements OnInit {
               )
           });
 
-          // prepare chart request for each dasbhoard item
+          // prepare visual request for each dasbhoard item
           const visuals = value.map((dashboard: DashboardItem) => {
             return this.loadVisualsByDashboard(dashboard.Id)
               .pipe(
                 tap((visuals: VisualConfigItem[]) => {
                   
-                  // assign charts to dashboard
+                  // assign visuals to dashboard
                   dashboard.visuals = visuals
                 })
               )
           });
 
+          // prepare snapshot request for each dasbhoard item
+          const snapshots = value.map((dashboard: DashboardItem) => {
+            return this.loadSnapshotsByDashboard(dashboard.Id)
+              .pipe(
+                tap((snapshots: SnapshotConfigItem[]) => {
+                  
+                  // assign snapshots to dashboard
+                  dashboard.snapshots = snapshots
+                })
+              )
+          });
+
           // TODO - add more items here to load and then , forkJoin
-          return forkJoin([...charts, ...visuals])
+          return forkJoin([...charts, ...visuals, ...snapshots])
             .pipe(
               map(_ => value)
             );
@@ -135,6 +144,12 @@ export class DashboardComponent implements OnInit {
           }) 
         )
 
+        // update snapshots dashboard due to grister config
+        this.dashboards.forEach(value => value.snapshots.forEach((snapshot:SnapshotConfigItem) => {
+          snapshot.gridConfig = { x: snapshot.PosX, y: snapshot.PosY, cols: snapshot.Width, rows: snapshot.Heigth, collection: 'snapshots', id: snapshot.SnapShotConfigId, layerIndex: 2 }
+          }) 
+        )
+
         this.ready = true;
       })
 
@@ -145,6 +160,9 @@ export class DashboardComponent implements OnInit {
         
         // trigger each visible chart update
         dashboardActive.charts.forEach((chart: ChartConfigItem) => this.dashboardService.reloadData$.next(chart.ChartConfigId))
+        
+        // trigger each visible snapshot update
+        dashboardActive.snapshots.forEach((snapshot: SnapshotConfigItem) => this.dashboardService.reloadData$.next(snapshot.SnapShotConfigId))
       })
   }
   
@@ -172,6 +190,15 @@ export class DashboardComponent implements OnInit {
       .pipe(
           // parse to known model
           map((value: any[]) => value.map(item =>  Object.assign(new VisualConfigItem(), item)))        
+      )
+  }
+
+  // load visual by dashboard id
+  private loadSnapshotsByDashboard(id: number): Observable<SnapshotConfigItem[]>{
+    return this.dashboardService.loadSnapshotsByDashboard(id)
+      .pipe(
+          // parse to known model
+          map((value: any[]) => value.map(item =>  Object.assign(new SnapshotConfigItem(), item)))        
       )
   }
 
@@ -231,7 +258,7 @@ export class DashboardComponent implements OnInit {
     // pick right id field of widget
     let idField;
     if(collection === 'charts') { idField = 'ChartConfigId' };
-    if(collection === 'snapshots') { idField = 'SnapshotConfigId' };
+    if(collection === 'snapshots') { idField = 'SnapShotConfigId' };
     if(collection === 'visuals') { idField = 'VisualConfigId' };
     
     // refresh model positions before update on server
@@ -242,11 +269,12 @@ export class DashboardComponent implements OnInit {
     
     // chart update
     if(itemChanged instanceof ChartConfigItem) { this.updateChart(itemChanged) }
-    
-    // snapshot update - TODO
 
     // visual update
     if(itemChanged instanceof VisualConfigItem) { this.updateVisual(itemChanged) }
+
+    // snapshot update
+    if(itemChanged instanceof SnapshotConfigItem) { this.updateSnapshot(itemChanged) }
 
     console.log('changed widget dimensions', itemChanged);
   }
@@ -388,7 +416,7 @@ export class DashboardComponent implements OnInit {
     const itemDeleted: VisualConfigItem = this.dashboards[this.activeDashboard].visuals.find((value: VisualConfigItem) => value.VisualConfigId === visual.VisualConfigId);
 
     itemDeleted.VisualConfigId < 0 
-    ? this.dashboards[this.activeDashboard].charts.splice(this.dashboards[this.activeDashboard].charts.indexOf(itemDeleted), 1)
+    ? this.dashboards[this.activeDashboard].visuals.splice(this.dashboards[this.activeDashboard].visuals.indexOf(itemDeleted), 1)
     : this.dashboardService.deleteVisual(itemDeleted)
         .subscribe(value => {
           console.log('removed visual', value)
@@ -446,6 +474,82 @@ export class DashboardComponent implements OnInit {
     return VisualConfigId || 0;
   }
 
+  /**
+   * Snapshots
+   */
+  editSnapshot(snapshot: SnapshotConfigItem) {
+    event.stopImmediatePropagation();
+    
+    // set chart in edition
+    this.dashboardService.clearWidgetsEdition();
+    this.dashboardService.snapshot$.next(snapshot);
+
+    this.router.navigate(['/', { outlets: {toolbox: 'widget-toolbox'} } ])
+  }
+
+  deleteSnapshot(snapshot: SnapshotConfigItem) {
+    event.stopImmediatePropagation();
+    const itemDeleted: SnapshotConfigItem = this.dashboards[this.activeDashboard].snapshots.find((value: SnapshotConfigItem) => value.SnapShotConfigId === snapshot.SnapShotConfigId);
+
+    itemDeleted.SnapShotConfigId < 0 
+    ? this.dashboards[this.activeDashboard].snapshots.splice(this.dashboards[this.activeDashboard].snapshots.indexOf(itemDeleted), 1)
+    : this.dashboardService.deleteSnapshot(itemDeleted)
+        .subscribe(value => {
+          console.log('removed snapshot', value)
+          this.dashboards[this.activeDashboard].snapshots.splice(this.dashboards[this.activeDashboard].snapshots.indexOf(itemDeleted), 1);
+          
+          // close panel
+          this.router.navigate(['/', { outlets: {toolbox: null} } ])
+        })
+  }
+
+  // update snapshot config on server
+  private updateSnapshot(snapshot: SnapshotConfigItem) {
+  // ingore unsaved snapshot
+  if(snapshot.SnapShotConfigId < 0) { return; }
+
+  // update snapshot
+  this.dashboardService.updateSnapshot(snapshot)
+    .subscribe(value => {
+      console.log(value)
+    })
+  }
+
+  // specific drop snapshot handler
+  private onDropSnapshot(snapshotType: number, emptyCellItem: GridsterItem) {
+    const unsavedSnapshotId = this.dashboards[this.activeDashboard].snapshots.reduce((min, snapshot) => snapshot.SnapShotConfigId < min ? snapshot.SnapShotConfigId : min, 0)
+    const newSnapshot: SnapshotConfigItem = Object.assign(new SnapshotConfigItem(), {
+      SnapShotConfigId: unsavedSnapshotId - 1,
+      SnapshotType: snapshotType,
+      DashBoardId: this.dashboards[this.activeDashboard].Id,
+      Name: 'new',
+      PosX: emptyCellItem.x, PosY: emptyCellItem.y,
+      Width: 6, Heigth: 4,    
+      Settings: [ {Key: 'layerIndex', Value: snapshotType === 1 ? 1 : 2} ]  
+    })
+
+    this.dashboards[this.activeDashboard].snapshots.push(newSnapshot);
+
+    // edit new snapshot in toolbox 
+    this.editSnapshot(newSnapshot);
+
+    // update grister-item with snapshotConfig positioning/size
+    this.dashboards.forEach(value => value.snapshots.forEach((snapshot: SnapshotConfigItem) => {
+      const layerSetting = snapshot.Settings.find(setting => setting.Key === 'layerIndex').Value as number;
+      
+      snapshot.gridConfig = { x: snapshot.PosX, y: snapshot.PosY, cols: snapshot.Width, rows: snapshot.Heigth, collection: 'snapshots', id: snapshot.SnapShotConfigId, layerIndex: layerSetting}
+      }) 
+    );
+  }
+
+  // get id of snapshot in edition
+  get editingSnapshotId(): number {
+    if(!this.dashboardService.snapshot$.value) { return 0 }
+    
+    const { SnapShotConfigId } = this.dashboardService.snapshot$.value;
+    return SnapShotConfigId || 0;
+  }
+
   // refresh widgets ConfigItems with grid positioning/size
   private refreshPositionFields() {
     // charts
@@ -455,16 +559,21 @@ export class DashboardComponent implements OnInit {
       chart.Width = chart.gridConfig.cols;
       chart.Heigth = chart.gridConfig.rows;
     }));
-
-    // snapshots - TODO
     
-
-    // visuals - TODO
+    // visuals
     this.dashboards.forEach(value => value.visuals.forEach((visual:VisualConfigItem) => {
       visual.PosX = visual.gridConfig.x;
       visual.PosY = visual.gridConfig.y;
       visual.Width = visual.gridConfig.cols;
       visual.Heigth = visual.gridConfig.rows;
+    }));
+
+    // snapshots
+    this.dashboards.forEach(value => value.snapshots.forEach((snapshot:SnapshotConfigItem) => {
+      snapshot.PosX = snapshot.gridConfig.x;
+      snapshot.PosY = snapshot.gridConfig.y;
+      snapshot.Width = snapshot.gridConfig.cols;
+      snapshot.Heigth = snapshot.gridConfig.rows;
     }));
   }
 
@@ -483,10 +592,11 @@ export class DashboardComponent implements OnInit {
     // drop chart
     if(collection === 'charts'){ return this.onDropChart(type, emptyCellItem) }
 
-    // drop snapshot - TODO
-
-    // drop visual - TODO
+    // drop visual
     if(collection === 'visuals'){ return this.onDropVisual(type, emptyCellItem) }
+
+    // drop snapshot
+    if(collection === 'snapshots'){ return this.onDropSnapshot(type, emptyCellItem) }
 
   }
 
@@ -500,6 +610,14 @@ export class DashboardComponent implements OnInit {
 
   get visualsCollection(): VisualConfigItem[] {
     return this.dashboards[this.activeDashboard].visuals.filter(value => {
+      if(!value.Settings) { return false }; // TODO - remove when chartConfig has Settings field
+      const container = value.Settings.find(setting => setting.Key === 'visualContainer');
+      return !container 
+    })
+  }
+
+  get snapshotsCollection(): SnapshotConfigItem[] {
+    return this.dashboards[this.activeDashboard].snapshots.filter(value => {
       if(!value.Settings) { return false }; // TODO - remove when chartConfig has Settings field
       const container = value.Settings.find(setting => setting.Key === 'visualContainer');
       return !container 

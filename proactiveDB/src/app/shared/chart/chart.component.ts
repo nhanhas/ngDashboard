@@ -7,7 +7,6 @@ import { ChartConfigItem } from 'src/app/core/models/ChartConfigItem';
 import { DashboardItem } from 'src/app/core/models/DashboardItem';
 import { SystemService } from 'src/app/core/system.service';
 import { DashboardService } from 'src/app/dashboard/dashboard.service';
-import { DashboardConfig } from 'src/app/dashboard/dashboard/dashboard.component';
 import * as zoomPlugin from 'chartjs-plugin-zoom';
 
 @Component({

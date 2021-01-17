@@ -31,6 +31,7 @@ export class DashboardService {
   clearWidgetsEdition() {
     this.chart$.next(undefined);
     this.visual$.next(undefined);
+    this.snapshot$.next(undefined);
   }
 
 

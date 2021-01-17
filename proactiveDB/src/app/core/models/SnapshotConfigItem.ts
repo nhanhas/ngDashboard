@@ -15,7 +15,7 @@ export class SnapshotConfigItem{
   Width: number;
   Heigth: number;
   Fields = [];
-  Settings: {Key: {}, Value: {}} [];
+  Settings: {Key: {}, Value: {}} [] = [];
 
   gridConfig: GridsterItem;
 }

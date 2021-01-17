@@ -195,6 +195,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   private reset() {
     this.visual = undefined;
     this.chart = undefined;
+    this.snapshot = undefined;
 
     this.availableDatasources = this.systemService.dataSourcesInUse;
   }
@@ -234,7 +235,7 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
   
   // we are editing element or creating a new one
   get isEditing(): boolean {
-    return !!this.chart || !!this.visual;
+    return !!this.chart || !!this.visual || !!this.visual;
   }
 
   // visuals

@@ -14,7 +14,7 @@ export class ChartConfigItem {
   Width: number  = 0;
   Heigth: number  = 0;
   Fields = [];
-  Settings: {Key: {}, Value: {}} [];
+  Settings: {Key: {}, Value: {}} [] = []; 
   XAxisMetadataEntry: number  = 0;
   RMetadataEntry: number  = 0;
 
