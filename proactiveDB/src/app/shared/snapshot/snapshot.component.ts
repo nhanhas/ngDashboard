@@ -18,6 +18,7 @@ export class SnapshotComponent implements OnInit, OnDestroy {
   // card
   label: string;
   data: any;
+  columns: string[] = [];
 
   loading: boolean;
   
@@ -114,7 +115,75 @@ export class SnapshotComponent implements OnInit, OnDestroy {
   }
 
   private tableSetup(result) {
+    result = [
+      [
+        "NumaNodeCount",
+        "CPUSockets",
+        "IsPolyBaseInstalled",
+        "InMemorySupported",
+        "IsLocalDB",
+        "IsIntegratedSecurityOnly",
+        "IsAlwaysOnEnabled",
+        "HadrManagerStatus"
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+          1,
+          2,
+          4,
+          50,
+          60,
+          7,
+          32,
+          60
+        ],
+        [
+          1,
+          2,
+          4,
+          50,
+          60,
+          7,
+          32,
+          60
+        ],
+        [
+          1,
+          2,
+          4,
+          50,
+          60,
+          7,
+          32,
+          60
+        ],
+        [
+          1,
+          2,
+          4,
+          50,
+          60,
+          7,
+          32,
+          60
+        ]
 
+        
+    ]
+
+    this.columns = result[0];
+    result.shift();
+    
+    this.data = result;
   }
 
   private gaugeSetup(result) {

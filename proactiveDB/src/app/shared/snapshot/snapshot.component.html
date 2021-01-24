@@ -1,27 +1,44 @@
 <div style="height: 100%" [ngClass]="{ 'loading-state': loading }">
-  <div class="snapshot-container" *ngIf="!loading; else loadingSpinner">
+  <div class="snapshot-container" [ngClass]="{ 'start': snapshot.SnapShotType === 1 || snapshot.SnapShotType === 2 }" *ngIf="!loading; else loadingSpinner">
 
-      <!-- Card -->
-      <ng-container *ngIf="snapshot.SnapShotType === 0">        
-        <span>{{label}}</span>
-        <h2>{{data}}</h2>
-      </ng-container>
+    <!-- Card -->
+    <ng-container *ngIf="snapshot.SnapShotType === 0">        
+      <span>{{label}}</span>
+      <h2>{{data}}</h2>
+    </ng-container>
 
-      <!-- List -->
-      <ng-container *ngIf="snapshot.SnapShotType === 1">
-        List
-      </ng-container>
+    <!-- Table -->
+    <ng-container *ngIf="snapshot.SnapShotType === 1">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th *ngFor="let column of columns">{{ column }}</th>                   
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of data">
+              <td *ngFor="let column of columns; let i = index" class="table-field-name">{{row[i]}}</td>
+            </tr>                           
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
 
-      <!-- Table -->
-      <ng-container *ngIf="snapshot.SnapShotType === 2">
-        Table
-      </ng-container>
+    <!-- List -->
+    <ng-container *ngIf="snapshot.SnapShotType === 2">
+      <div class="list-container">
+        <span class="left-margin">{{columns[0]}}:</span>
+        <ul>
+          <li *ngFor="let row of data">{{ row[0] }}</li>
+        </ul>
+      </div>  
+    </ng-container>
 
-      <!-- Gouge -->
-      <ng-container *ngIf="snapshot.SnapShotType === 3">
-        Gouge
-      </ng-container>
-
+    <!-- Gouge -->
+    <ng-container *ngIf="snapshot.SnapShotType === 3">
+      Gouge
+    </ng-container>
 
   </div>
 </div>

@@ -4,15 +4,41 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  &.start {
+    justify-content: start;
+  }
+
 }
 
 .loading-state {
   display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 :host ::ng-deep .custom-spinner circle{   
   stroke: #326dff;
+}
+
+.list-container, .table-container {
+  width: 100%;
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  td, th {
+      text-align: left;
+      padding: 8px;
+  }
+  tr{
+      border-bottom: 1px solid #ddd;
+  }
+}
+
+.left-margin {
+  margin-left: 16px;
 }
