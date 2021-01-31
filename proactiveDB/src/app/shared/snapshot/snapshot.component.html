@@ -37,7 +37,17 @@
 
     <!-- Gouge -->
     <ng-container *ngIf="snapshot.SnapShotType === 3">
-      Gauge
+      <div>
+        <ngx-gauge class="gauge-width"
+          [type]="gaugeType" 
+          [value]="data" 
+          [label]="getSnapshotSetting('gaugeLabel').Value"  
+          [append]="getSnapshotSetting('gaugeAppend').Value"
+          [size]="getSnapshotSetting('gaugeSize', true, 100).Value"
+          [min]="getSnapshotSetting('gaugeMin', true, 0).Value"
+          [max]="getSnapshotSetting('gaugeMax', true, 100).Value">
+        </ngx-gauge>
+      </div>
     </ng-container>
 
   </div>

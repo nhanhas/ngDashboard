@@ -222,10 +222,39 @@
         Configurations
       </mat-expansion-panel-header>    
     
-      <div style="margin: 0px 0 24px">
-        <label >
+      <div style="margin: 0px 0 24px" fxLayout="row">
+        <label fxFlex="50" class="field">
           Name:
           <input [(ngModel)]="snapshot.Name">
+        </label>
+
+        <label fxFlex="50" class="field">
+          Gauge size: ({{getSnapshotSetting('gaugeSize', true, 100).Value}}px)
+          <input type="range" min="100" max="600" [(ngModel)]="getSnapshotSetting('gaugeSize', true, 100).Value">
+        </label>
+      </div>
+
+      <div style="margin: 0px 0 24px" fxLayout="row">
+        <label fxFlex="50" class="field">
+          Min value:
+          <input type="number" [(ngModel)]="getSnapshotSetting('gaugeMin', true, 0).Value">
+        </label>
+
+        <label fxFlex="50" class="field">
+          Max value:
+          <input type="number" [(ngModel)]="getSnapshotSetting('gaugeMax', true, 100).Value">
+        </label>
+      </div>
+
+      <div style="margin: 0px 0 24px" fxLayout="row">
+        <label fxFlex="50" class="field">
+          Gauge label:
+          <input type="text" [(ngModel)]="getSnapshotSetting('gaugeLabel').Value">
+        </label>
+
+        <label fxFlex="50" class="field">
+          Gauge unit:
+          <input type="text" [(ngModel)]="getSnapshotSetting('gaugeAppend').Value">
         </label>
       </div>
 

@@ -42,3 +42,16 @@ table {
 .left-margin {
   margin-left: 16px;
 }
+
+.gauge-width {
+  width: 100% !important;
+
+  ::ng-deep .reading-block {
+    overflow: unset !important;
+  }
+
+  ::ng-deep .reading-label {
+    overflow: unset !important;
+  }
+
+}

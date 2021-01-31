@@ -22,6 +22,7 @@ import { FilterToolboxComponent } from './toolbox/filter-toolbox/filter-toolbox.
 import { VisualComponent } from './visual/visual.component';
 import { VisualContainerComponent } from './visual/visual-container/visual-container.component';
 import { SnapshotComponent } from '../shared/snapshot/snapshot.component';
+import { NgxGaugeModule } from 'ngx-gauge';
 
 
 
@@ -53,7 +54,8 @@ import { SnapshotComponent } from '../shared/snapshot/snapshot.component';
     ReactiveFormsModule,
     MatTreeModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    NgxGaugeModule
   ],
   exports: [
     MaterialModule,
@@ -68,7 +70,8 @@ import { SnapshotComponent } from '../shared/snapshot/snapshot.component';
     UserInfoComponent,
     VisualComponent,
     VisualContainerComponent,
-    SnapshotComponent
+    SnapshotComponent,
+    NgxGaugeModule
   ]
 })
 export class SharedModule { }

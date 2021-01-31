@@ -20,6 +20,12 @@ export class SnapshotComponent implements OnInit, OnDestroy {
   data: any;
   columns: string[] = [];
 
+  // gauge
+  gaugeType = 'arch';
+  gaugeLabel = '';
+  gaugeAppendText = '';
+
+
   loading: boolean;
   
   // unsubscribe
@@ -187,7 +193,17 @@ export class SnapshotComponent implements OnInit, OnDestroy {
   }
 
   private gaugeSetup(result) {
+    if(result.datasets.length === 0) { return; }
 
+    const label = result.datasets[0].label;
+    const data = result.datasets.map(dataset => {
+        return dataset.data;
+    });
+    
+    this.gaugeLabel = label;
+    this.data = !!data.length
+        ? data[0][0]?.y
+        : '';
   }
 
   get dashboardDateFilters(): { startDate: Date, endDate: Date } {
@@ -207,5 +223,27 @@ export class SnapshotComponent implements OnInit, OnDestroy {
       ? { startDate: startDateFilter.Value, endDate: endDateFilter.Value }
       : { startDate: start, endDate: end }
 
+  }
+
+  getSnapshotSetting(setting, isNumber?: boolean, defaultNumber?: number) {
+    // get setting
+    let snapshotSetting = this.snapshot.Settings.find(value => value.Key === setting);
+    
+    defaultNumber = defaultNumber ? defaultNumber : 0; 
+
+    // remove this if below
+    if(snapshotSetting) { 
+        snapshotSetting.Value = isNumber 
+            ? +snapshotSetting.Value
+            : snapshotSetting.Value;
+
+        return snapshotSetting; 
+    }
+
+    // if not exist, create it
+    this.snapshot.Settings.push({ Key: setting, Value: isNumber ? defaultNumber : '' })
+
+    // return ref
+    return this.snapshot.Settings.find(value => value.Key === setting);
   }
 }

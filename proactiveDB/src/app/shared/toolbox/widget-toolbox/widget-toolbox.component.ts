@@ -278,4 +278,27 @@ export class WidgetToolboxComponent implements OnInit, OnDestroy {
     // there is no compatibility
     return this.snapshot.SnapShotType !== type.snapshotType;
   }
+
+  getSnapshotSetting(setting, isNumber?: boolean, defaultNumber?: number) {
+    // get setting
+    let snapshotSetting = this.snapshot.Settings.find(value => value.Key === setting);
+    
+    defaultNumber = defaultNumber ? defaultNumber : 0; 
+
+    // remove this if below
+    if(snapshotSetting) { 
+        snapshotSetting.Value = isNumber 
+            ? +snapshotSetting.Value
+            : snapshotSetting.Value;
+
+        return snapshotSetting; 
+    }
+
+    // if not exist, create it
+    this.snapshot.Settings.push({ Key: setting, Value: isNumber ? defaultNumber : '' })
+
+    // return ref
+    return this.snapshot.Settings.find(value => value.Key === setting);
+  }
+
 }

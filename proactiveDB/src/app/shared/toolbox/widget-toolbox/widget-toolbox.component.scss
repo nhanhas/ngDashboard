@@ -26,3 +26,10 @@
     padding-top: 16px;
   }
 }
+
+.field {
+  padding: 0 8px;
+  > input {
+    width: 100%;
+  }
+}
