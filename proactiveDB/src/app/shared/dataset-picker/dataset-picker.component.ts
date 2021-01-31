@@ -12,6 +12,7 @@ export class DatasetPickerComponent implements OnInit, OnChanges, OnDestroy {
   @Input() datasourceItems: DataSourceItem[];
   @Input() xAxisField: any;
   @Input() yAxisFields: any[] = [];
+  @Input() hideXFields: boolean;
 
   @Output() xAxisFieldChange = new EventEmitter<number>();
   @Output() yAxisFieldsChange = new EventEmitter<any[]>();

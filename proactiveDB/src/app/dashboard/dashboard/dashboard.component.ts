@@ -525,7 +525,6 @@ export class DashboardComponent implements OnInit {
       Name: 'new',
       PosX: emptyCellItem.x, PosY: emptyCellItem.y,
       Width: 6, Heigth: 4,    
-      Settings: [ {Key: 'layerIndex', Value: snapshotType === 1 ? 1 : 2} ]  
     })
 
     this.dashboards[this.activeDashboard].snapshots.push(newSnapshot);
@@ -535,9 +534,7 @@ export class DashboardComponent implements OnInit {
 
     // update grister-item with snapshotConfig positioning/size
     this.dashboards.forEach(value => value.snapshots.forEach((snapshot: SnapshotConfigItem) => {
-      const layerSetting = snapshot.Settings.find(setting => setting.Key === 'layerIndex').Value as number;
-      
-      snapshot.gridConfig = { x: snapshot.PosX, y: snapshot.PosY, cols: snapshot.Width, rows: snapshot.Heigth, collection: 'snapshots', id: snapshot.SnapShotConfigId, layerIndex: layerSetting}
+      snapshot.gridConfig = { x: snapshot.PosX, y: snapshot.PosY, cols: snapshot.Width, rows: snapshot.Heigth, collection: 'snapshots', id: snapshot.SnapShotConfigId }
       }) 
     );
   }
